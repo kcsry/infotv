@@ -2,9 +2,11 @@
 *.pyc
 *.sqlite3
 .bundle/
+.cache
 .coverage
 .idea/
 .sublime-*
+.tox
 /static/
 bower_components/
 build/

@@ -3,6 +3,8 @@ import json
 
 from django.test.client import RequestFactory
 from django.test.utils import override_settings
+from django.utils.encoding import force_text
+
 from infotv.views import InfoTvView
 import pytest
 
@@ -35,17 +37,18 @@ def get_deck_post_request():
 
 
 @pytest.mark.django_db
-def test_post_deck(rf):
+def test_post_deck(rf, settings):
+    settings.INFOTV_POLICY_CLASS = "infotv.policy.AnythingGoesPolicy"
     request = get_deck_post_request()
     last_deck_id = 0
     for x in range(3):
         response = InfoTvView.as_view()(request=request, event="dsfargeg")
         assert response.status_code == 200
-        deck_id = json.loads(response.content)["id"]
+        deck_id = json.loads(force_text(response.content))["id"]
         assert deck_id > last_deck_id
         last_deck_id = deck_id
     response = InfoTvView.as_view()(request=rf.get("/", {"action": "get_deck"}), event="dsfargeg")
-    deck_data = json.loads(response.content)["deck"]
+    deck_data = json.loads(force_text(response.content))["deck"]
     assert deck_data["id"] == last_deck_id
     assert deck_data["slides"] == EXAMPLE_DECK_DATA["slides"]
 
@@ -53,7 +56,7 @@ def test_post_deck(rf):
 @pytest.mark.django_db
 def test_get_bogus_event_deck(rf):
     response = InfoTvView.as_view()(request=rf.get("/", {"action": "get_deck"}), event="dkfjstwr4iunm")
-    assert json.loads(response.content)["deck"]["id"] == "missing"
+    assert json.loads(force_text(response.content))["deck"]["id"] == "missing"
 
 
 @pytest.mark.django_db

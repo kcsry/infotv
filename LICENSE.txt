@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2014, 2015 Kehittyvien conien Suomi ry
+Copyright (c) 2014-2017 Kehittyvien conien Suomi ry
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

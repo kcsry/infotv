@@ -12,7 +12,7 @@ Try it out
 (Set up a virtualenv first, naturally.)
 
 ```
-pip install -r requirements.txt
+pip install -e .
 (cd infotv/frontend && npm i && npm run build)
 (python manage.py migrate && python manage.py runserver)
 ```
@@ -59,6 +59,6 @@ Running tests
 -------------
 
 ```
-pip install -r requirements_dev.txt
-python runtests.py
+pip install -r requirements-dev.txt
+py.test
 ```

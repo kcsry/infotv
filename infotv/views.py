@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.db.transaction import atomic
 from django.http.response import HttpResponse, JsonResponse
 from django.views.generic import View
+from django.utils.text import force_text
 
 from .models import Datum, SlideDeck
 from .policy import get_policy
@@ -74,7 +75,7 @@ class InfoTvView(View):
             value = json.loads(value)
             parsed = True
         except ValueError:
-            value = unicode(value)
+            value = force_text(value)
             parsed = False
 
         event_slug = self.get_event_slug()
@@ -89,8 +90,8 @@ class InfoTvView(View):
             return JsonResponse({"datum": datum.serialize(), "parsed": parsed})
         except Exception as e:
             return JsonResponse({
-                "error": unicode(type(e)),
-                "message": unicode(e)
+                "error": force_text(type(e)),
+                "message": force_text(e),
             }, status=400)
 
     def handle_get_deck(self):
