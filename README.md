@@ -59,6 +59,6 @@ Running tests
 -------------
 
 ```
-pip install -r requirements_dev.txt
+pip install -r requirements-dev.txt
 py.test
 ```

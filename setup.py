@@ -21,5 +21,5 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=requirements("requirements.txt"),
-    tests_require=requirements("requirements_dev.txt"),
+    tests_require=requirements("requirements-dev.txt"),
 )
