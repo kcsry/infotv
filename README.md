@@ -12,7 +12,7 @@ Try it out
 (Set up a virtualenv first, naturally.)
 
 ```
-pip install -r requirements.txt
+pip install -e .
 (cd infotv/frontend && npm i && npm run build)
 (python manage.py migrate && python manage.py runserver)
 ```

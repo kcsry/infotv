@@ -6,6 +6,7 @@
 .coverage
 .idea/
 .sublime-*
+.tox
 /static/
 bower_components/
 build/
