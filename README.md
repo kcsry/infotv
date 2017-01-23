@@ -60,5 +60,5 @@ Running tests
 
 ```
 pip install -r requirements_dev.txt
-python runtests.py
+py.test
 ```

@@ -2,6 +2,7 @@
 *.pyc
 *.sqlite3
 .bundle/
+.cache
 .coverage
 .idea/
 .sublime-*
