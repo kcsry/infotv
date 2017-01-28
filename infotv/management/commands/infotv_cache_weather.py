@@ -1,18 +1,13 @@
 # -- encoding: UTF-8 --
-from optparse import make_option
 import requests
 from django.core.management.base import BaseCommand
 from infotv.models import Datum
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option("--location-id", type=int, default=649360),
-        make_option(
-            "--app-id", type=str,
-            help="OpenWeatherMap App ID"
-        ),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("--location-id", default=649360, type=int)
+        parser.add_argument("--app-id", help="OpenWeatherMap App ID", type=str)
 
     def handle(self, location_id, app_id, **options):
         if not app_id:
