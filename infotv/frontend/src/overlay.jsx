@@ -1,5 +1,6 @@
 import React from "react";
 import moment from "moment";
+import _ from "lodash";
 import DatumManager from "./datum";
 
 export default class OverlayComponent extends React.Component {
@@ -29,10 +30,17 @@ export default class OverlayComponent extends React.Component {
             icon = null;
         }
 
-        return (<div className="weather">
-            <span>{temperature ? `${temperature.toLocaleString("fi", { maximumFractionDigits: 1 })}°C` : ""}</span>
-            <span>{icon}</span>
-        </div>);
+        return (
+            <div className="weather">
+                <span>
+                    {_.isFinite(temperature)
+                      ? `${temperature.toLocaleString("fi", { maximumFractionDigits: 1 })}°C`
+                      : ""
+                    }
+                </span>
+                <span>{icon}</span>
+            </div>
+        );
     }
 
     render() {
