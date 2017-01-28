@@ -18,5 +18,6 @@ setup(
     install_requires=[
         'Django>=1.8',
         'jsonfield>=1.0.3',
+        'requests>=2.13.0',
     ],
 )
