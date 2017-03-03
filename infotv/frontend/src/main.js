@@ -1,5 +1,7 @@
 /* eslint-disable new-cap, no-param-reassign */
 
+import "babel-polyfill";
+
 import React from "react";
 import ReactDOM from "react-dom";
 import TV from "./tv.jsx";
