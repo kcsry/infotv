@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="infotv",
-    version="0.2.0",
+    version="0.3.0",
     description="A television, with information",
     author="Aarni Koskela",
     author_email="akx@iki.fi",
