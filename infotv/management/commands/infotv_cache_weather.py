@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 if he.response.status_code == 401:  # Reraise unauthorized immediately
                     raise
                 self.stderr.write("Attempt %d failed (%s), trying again soon..." % (attempt, he))
-                time.sleep(1 ** attempt)
+                time.sleep(2 ** (attempt - 1))
         raise RuntimeError("All attempts at retrieving data failed.")
 
     def retrieve_weather(self, location_id, app_id):
