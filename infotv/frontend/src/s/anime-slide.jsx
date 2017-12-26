@@ -2,10 +2,13 @@ import React from "react";
 import DatumManager from "../datum";
 
 function AnimeSlide() {
-    const anime = `${DatumManager.getValue("anime") || ""}`;
+    const anime = DatumManager.getValue("anime", {now: "", next: ""});
     return (
         <div className="slide anime-slide">
-            <span>{anime}</span>
+            <div className="now-header">Animehuoneessa nyt:</div>
+            <div className="now">{anime.now}</div>
+            <div className="next-header">Seuraavaksi:</div>
+            <div className="next">{anime.next}</div>
         </div>
     );
 }
