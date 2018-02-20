@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.db.transaction import atomic
 from django.http.response import HttpResponse, JsonResponse
 from django.views.generic import View
-from django.utils.text import force_text
+from django.utils.encoding import force_text
 
 from .models import Datum, SlideDeck
 from .policy import get_policy
