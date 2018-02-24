@@ -159,10 +159,8 @@ export default class TVApp extends React.Component {
         const animate = !(this.state.edit || config.slow);
         return (<div>
             <div id="content" key="content">
-                <SlidesComponent tv={this} currentSlide={currentSlide} animate={animate} />
-            </div>
-            <div id="overlay" key="overlay">
                 <OverlayComponent />
+                <SlidesComponent tv={this} currentSlide={currentSlide} animate={animate} />
             </div>
             {eep}
             {editor}
