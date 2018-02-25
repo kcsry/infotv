@@ -1,12 +1,15 @@
 /* eslint "react/no-multi-comp": 0 */
 
 import React from "react";
-const markdown = require("markdown").markdown;
+const markdown = require("markdown-it")({
+    html: true,
+    breaks: true
+});
 import propTypes from "../prop-types";
 
 function TextSlide(props) {
     const slide = props.slide;
-    const html = markdown.toHTML(slide.content || "");
+    const html = markdown.render(slide.content || "");
     return <div className="text-slide" dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
