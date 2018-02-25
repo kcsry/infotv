@@ -24,7 +24,7 @@ const config = {
                 loader: "babel",
             },
             {
-                test: /\.(woff|svg|otf|ttf|eot|png)(\?.*)?$/,
+                test: /\.(woff|svg|otf|ttf|eot|png|json)(\?.*)?$/,
                 loader: "url",
             },
         ],
