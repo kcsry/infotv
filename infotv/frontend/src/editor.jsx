@@ -131,10 +131,10 @@ export default class EditorComponent extends React.Component {
                 <button onClick={this.confirmAndPublish}>Julkaise muutokset</button>
             </div>
             <div className="eep-editor toolbar">
-                <label>
+                <label htmlFor="eep-input">
                     Erikoisviesti:&nbsp;
-                    <input value={this.props.deck.eep || ""} onChange={this.eepChanged} />
                 </label>
+                <input value={this.props.deck.eep || ""} onChange={this.eepChanged} id="eep-input" />
             </div>
             <div className="slide-selector toolbar">
                 <select value={currentSlide ? currentSlide.id : ""} onChange={this.slideChanged} id="editor-select-slide">{options}</select>
