@@ -108,7 +108,16 @@ export default class EditorComponent extends React.Component {
         }
         const slides = this.props.deck.slides;
         const options = slides.map((s, i) => {
-            let text = `Slide ${i + 1} (${s.type}) [${s.id}]`;
+            let text = `Slide ${i + 1} (${s.type}) `;
+            if (s.type === "text") {
+                let contentTrim = s.content || "";
+                if (contentTrim.length > 15) {
+                    contentTrim = `${contentTrim.substr(0, 15)}...`;
+                }
+                text += `"${contentTrim}"`;
+            } else {
+                text += `[${s.id}]`;
+            }
             if (s.duration <= 0) text += " (ei päällä)";
             return (<option key={s.id} value={s.id}>{text}</option>);
         });
