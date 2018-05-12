@@ -10,7 +10,8 @@ import propTypes from "../prop-types";
 function TextSlide(props) {
     const slide = props.slide;
     const html = markdown.render(slide.content || "");
-    return <div className="text-slide" dangerouslySetInnerHTML={{ __html: html }} />;
+    // clock-placeholder is a kludge to fix text wrapping around floated clock-element.
+    return <div className="slide text-slide"><div className="clock-placeholder" /><span dangerouslySetInnerHTML={{ __html: html }} /></div>;
 }
 
 TextSlide.propTypes = {
