@@ -16,6 +16,9 @@ export default class EditorComponent extends React.Component {
         this.slideChanged = this.slideChanged.bind(this);
         this.slideDurationChanged = this.slideDurationChanged.bind(this);
         this.slideTypeChanged = this.slideTypeChanged.bind(this);
+        this.deckChanged = this.deckChanged.bind(this);
+        this.addNewDeck = this.addNewDeck.bind(this);
+        this.deleteDeck = this.deleteDeck.bind(this);
     }
 
     getSlideEditor(currentSlide) {
@@ -61,7 +64,7 @@ export default class EditorComponent extends React.Component {
 
     eepChanged(event) {
         const eep = event.target.value;
-        this.props.deck.eep = eep && eep.length ? eep : null;
+        this.props.data.eep = eep && eep.length ? eep : null;
         this.props.tv.forceUpdate();
     }
 
@@ -76,7 +79,7 @@ export default class EditorComponent extends React.Component {
     }
 
     moveSlide(slide_, direction) {
-        const { slides } = this.props.deck;
+        const slides = this.props.tv.getDeck();
         const idx = slides.indexOf(slide_);
         if (idx === -1) return;
         const slide = slides.splice(idx, 1)[0];
@@ -102,8 +105,8 @@ export default class EditorComponent extends React.Component {
     }
 
     confirmAndPublish() {
-        if (this.props.deck.slides.length <= 0) {
-            alert("Ei voi julkaista tyhjää pakkaa");
+        if (this.props.data.decks.default.length <= 0) {
+            alert("Ei voi julkaista tyhjää Default-pakkaa");
             return false;
         }
         if (!confirm("Oletko varma että haluat julkaista nykyisen pakan?")) {
@@ -112,7 +115,7 @@ export default class EditorComponent extends React.Component {
 
         const deckFormData = new FormData();
         deckFormData.append("action", "post_deck");
-        deckFormData.append("data", JSON.stringify(this.props.deck));
+        deckFormData.append("data", JSON.stringify(this.props.data));
         fetchJSON(location.pathname, { method: "POST", body: deckFormData })
             .then((data) => {
                 alert(data.message || "wut :(");
@@ -124,12 +127,28 @@ export default class EditorComponent extends React.Component {
         return true;
     }
 
+    deckChanged(event) {
+        this.props.tv.changeDeck(event.target.value);
+    }
+
+    addNewDeck() {
+        const newDeckName = this.newDeckInput.value.trim().toLowerCase();
+        this.props.tv.addNewDeck(newDeckName);
+        this.newDeckInput.value = "";
+    }
+
+    deleteDeck() {
+        this.props.tv.deleteCurrentDeck();
+    }
+
     render() {
-        if (!this.props.deck) {
-            return <div>Missing deck :(</div>;
+        if (!this.props.data || !this.props.data.hasOwnProperty("decks")) {
+            return <div>Missing decks :(</div>;
         }
-        const { slides } = this.props.deck;
-        const options = slides.map((s, i) => {
+        const deckOptions = Object.keys(this.props.data.decks).map((name) => <option key={name} value={name}>{name}</option>);
+
+        const slides = this.props.tv.getDeck();
+        const slideOptions = slides.map((s, i) => {
             let text = `Slide ${i + 1} (${s.type}) `;
             if (s.type === "text") {
                 let contentTrim = s.content || "";
@@ -160,10 +179,24 @@ export default class EditorComponent extends React.Component {
                 <div className="eep-editor toolbar">
                     <label htmlFor="eep-input">Erikoisviesti:&nbsp;</label>
                     <input
-                        value={this.props.deck.eep || ""}
+                        value={this.props.data.eep || ""}
                         onChange={this.eepChanged}
                         id="eep-input"
                     />
+                </div>
+                <div className="toolbar-header">
+                    Pakka
+                </div>
+                <div className="deck-selector toolbar">
+                    <select value={this.props.currentDeckName ? this.props.currentDeckName : ""} onChange={this.deckChanged} id="editor-select-deck">{deckOptions}</select>
+                </div>
+                <div className="deck-creator toolbar">
+                    <label>Nimi: <input ref={input => { this.newDeckInput = input; }} id="new-deck-name" /></label>
+                    <button onClick={this.addNewDeck}>Uusi pakka</button>
+                    <button onClick={this.deleteDeck} disabled={!this.props.currentDeckName}>Poista</button>
+                </div>
+                <div className="toolbar-header">
+                    Slide
                 </div>
                 <div className="slide-selector toolbar">
                     <select
@@ -171,9 +204,9 @@ export default class EditorComponent extends React.Component {
                         onChange={this.slideChanged}
                         id="editor-select-slide"
                     >
-                        {options}
+                        {slideOptions}
                     </select>
-                    <button onClick={this.props.tv.addNewSlide}>Uusi</button>
+                    <button onClick={this.props.tv.addNewSlide}>Uusi slide</button>
                 </div>
                 <div className="slide-editor-ctr">{slideEditor}</div>
             </div>
@@ -182,7 +215,8 @@ export default class EditorComponent extends React.Component {
 }
 
 EditorComponent.propTypes = {
-    deck: propTypes.deck.isRequired,
+    data: propTypes.data.isRequired,
     tv: propTypes.tv.isRequired,
-    currentSlide: propTypes.slide.isRequired,
+    currentDeckName: propTypes.deckName,
+    currentSlide: propTypes.slide,
 };

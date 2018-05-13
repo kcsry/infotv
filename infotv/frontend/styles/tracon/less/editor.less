@@ -15,11 +15,31 @@
         background: none;
         color: #fff;
         border: 1px solid #3071a9;
+
+        &:disabled {
+            color: #999;
+        }
     }
 }
 
 #editor-select-slide {
     width: 70%;
+}
+
+.slide-selector {
+    padding-top: 10px;
+}
+
+.toolbar-header {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 5px;
+    border-top: 1px dotted #3071a9;
+
+    & + div {
+        margin-top: 0;
+        border-top: none;
+    }
 }
 
 .text-slide-editor, .multi-image-slide-editor {
