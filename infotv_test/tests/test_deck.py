@@ -9,25 +9,35 @@ from infotv.views import InfoTvView
 import pytest
 
 EXAMPLE_DECK_DATA = {
-    "slides": [
-        {
-            "duration": 0,
-            "content": "# test",
-            "type": "text",
-            "id": "s24t7h1n0q"
-        },
-        {
-            "duration": 0,
-            "src": "https://placehold.it/304x220",
-            "type": "image",
-            "id": "s2534m3sqo"
-        },
-        {
-            "duration": 0,
-            "type": "nownext",
-            "id": "s2533iqgbo"
-        }
-    ],
+    "decks": {
+        "default": [
+            {
+                "duration": 1,
+                "content": "# test",
+                "type": "text",
+                "id": "s24t7h1n0q"
+            },
+            {
+                "duration": 1,
+                "src": "https://placehold.it/304x220",
+                "type": "image",
+                "id": "s2534m3sqo"
+            },
+            {
+                "duration": 1,
+                "type": "nownext",
+                "id": "s2533iqgbo"
+            }
+        ],
+        "testdeck": [
+            {
+                "type": "text",
+                "duration": 1,
+                "id": "s29nhihhe8",
+                "content": "slide in testdeck"
+            }
+        ]
+    },
     "eep": None
 }
 
@@ -48,15 +58,15 @@ def test_post_deck(rf, settings):
         assert deck_id > last_deck_id
         last_deck_id = deck_id
     response = InfoTvView.as_view()(request=rf.get("/", {"action": "get_deck"}), event="dsfargeg")
-    deck_data = json.loads(force_text(response.content))["deck"]
+    deck_data = json.loads(force_text(response.content))
     assert deck_data["id"] == last_deck_id
-    assert deck_data["slides"] == EXAMPLE_DECK_DATA["slides"]
+    assert deck_data["data"] == EXAMPLE_DECK_DATA
 
 
 @pytest.mark.django_db
 def test_get_bogus_event_deck(rf):
     response = InfoTvView.as_view()(request=rf.get("/", {"action": "get_deck"}), event="dkfjstwr4iunm")
-    assert json.loads(force_text(response.content))["deck"]["id"] == "missing"
+    assert json.loads(force_text(response.content))["id"] == "missing"
 
 
 @pytest.mark.django_db

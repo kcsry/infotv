@@ -25,9 +25,15 @@ export default class TVApp extends React.Component {
         this.slideSwitchTick = this.slideSwitchTick.bind(this);
         this.addNewSlide = this.addNewSlide.bind(this);
         this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this);
+        this.getDeck = this.getDeck.bind(this);
+        this.addNewDeck = this.addNewDeck.bind(this);
+        this.deleteCurrentDeck = this.deleteCurrentDeck.bind(this);
+        this.changeDeck = this.changeDeck.bind(this);
 
         this.state = {
-            deck: null,
+            data: {},
+            currentDeckName: config.deck ? config.deck.toLowerCase() : "default",
+            id: -1,
             slideIndex: 0,
             ticksUntilNextSlide: 1,
             edit: false,
@@ -67,6 +73,18 @@ export default class TVApp extends React.Component {
         clearInterval(this.slideSwitchTimer);
     }
 
+    getDeck() {
+        if (!this.state.data.hasOwnProperty("decks")) {
+            // Data has not been loaded yet
+            return [];
+        }
+        if (!this.state.currentDeckName || !this.state.data.decks.hasOwnProperty(this.state.currentDeckName)) {
+            // Fallback to default deck if preferred deck is not available
+            return this.state.data.decks.default;
+        }
+        return this.state.data.decks[this.state.currentDeckName];
+    }
+
     slideSwitchTick() {
         if (this.state.edit) return false;
         const ticks = this.state.ticksUntilNextSlide - 1;
@@ -80,10 +98,10 @@ export default class TVApp extends React.Component {
     nextSlide() {
         let ticksUntilNextSlide = 1;
         let newSlideIndex = null;
-        const { deck } = this.state;
-        for (let offset = 1; offset < 30; offset += 1) {
-            newSlideIndex = Math.max(0, this.state.slideIndex + offset) % deck.slides.length;
-            const newSlide = deck.slides[newSlideIndex];
+        const deck = this.getDeck();
+        for (let offset = 1; offset < 30; offset++) {
+            newSlideIndex = Math.max(0, this.state.slideIndex + offset) % deck.length;
+            const newSlide = deck[newSlideIndex];
 
             if (newSlide) {
                 // eslint-disable-next-line no-bitwise
@@ -100,7 +118,7 @@ export default class TVApp extends React.Component {
     }
 
     viewSlideById(id) {
-        const index = _.findIndex(this.state.deck.slides, (s) => s.id === id);
+        const index = _.findIndex(this.getDeck(), (s) => s.id === id);
         if (index > -1) {
             this.setState({ slideIndex: index });
             console.log("Viewing slide:", index, "id", id);
@@ -109,27 +127,55 @@ export default class TVApp extends React.Component {
 
     addNewSlide() {
         const slide = { type: "text", duration: 1, id: `s${Date.now().toString(30)}` };
-        const { deck } = this.state;
-        deck.slides.splice(this.state.slideIndex, 0, slide);
-        this.setState({ deck });
+        const deck = this.getDeck();
+        deck.splice(this.state.slideIndex, 0, slide);
+        const { data } = this.state;
+        this.setState({ data });
         this.viewSlideById(slide.id);
     }
 
     deleteCurrentSlide() {
-        const { deck } = this.state;
-        deck.slides.splice(this.state.slideIndex, 1);
-        this.setState({ deck, slideIndex: 0 });
+        const deck = this.getDeck();
+        deck.splice(this.state.slideIndex, 1);
+        const { data } = this.state;
+        this.setState({ data, slideIndex: 0 });
+    }
+
+    addNewDeck(newDeckName) {
+        const { data } = this.state;
+        if (!newDeckName || newDeckName.length <= 0 || data.decks.hasOwnProperty(newDeckName)) {
+            alert("Pakalta puuttuu nimi tai se on jo olemassa.");
+            return;
+        }
+        data.decks[newDeckName] = [];
+        this.setState({ data, currentDeckName: newDeckName, slideIndex: 0 }, () => {
+            this.addNewSlide();
+        });
+    }
+
+    deleteCurrentDeck() {
+        if (this.state.currentDeckName === "default") {
+            alert("Default-pakkaa ei voi poistaa.");
+            return;
+        }
+        const { data } = this.state;
+        delete data.decks[this.state.currentDeckName];
+        this.setState({ data });
+    }
+
+    changeDeck(newDeckName) {
+        this.setState({ currentDeckName: newDeckName, slideIndex: 0 });
     }
 
     requestDeck() {
         if (this.state.edit) return false; // When in edit mode, prevent auto-update
         // eslint-disable-next-line no-restricted-globals
         fetchJSON(`${location.pathname}?${QS.stringify({ action: "get_deck" })}`).then(
-            ({ deck, datums }) => {
-                if (!this.state.deck || this.state.deck.id !== deck.id) {
-                    this.setState({ deck, slideIndex: -1 });
+            ({ id, data, datums }) => {
+                if (!this.state.data || !this.state.data.hasOwnProperty("decks") || this.state.id !== id) {
+                    console.log("new decks", data);
+                    this.setState({ data, id, slideIndex: -1 });
                     this.nextSlide();
-                    console.log("new deck", deck);
                 }
                 DatumManager.update(datums || {});
             }
@@ -165,19 +211,20 @@ export default class TVApp extends React.Component {
 
     render() {
         let currentSlide = null;
+        const deck = this.getDeck();
         if (config.only) {
             currentSlide = { type: config.only, id: "only" };
-        } else if (this.state.deck && this.state.deck.slides) {
-            currentSlide = this.state.deck.slides[this.state.slideIndex];
+        } else if (deck) {
+            currentSlide = deck[this.state.slideIndex];
         }
         const editor = this.state.edit ? (
             <div id="editor" key="editor">
-                <EditorComponent tv={this} deck={this.state.deck} currentSlide={currentSlide} />
+                <EditorComponent tv={this} data={this.state.data} currentDeckName={this.state.currentDeckName} currentSlide={currentSlide} />
             </div>
         ) : null;
         const eep =
-            this.state.deck && this.state.deck.eep ? (
-                <div id="eep">{this.state.deck.eep}</div>
+            this.state.data.eep ? (
+                <div id="eep">{this.state.data.eep}</div>
             ) : null;
         const animate = !(this.state.edit || config.slow);
         return (

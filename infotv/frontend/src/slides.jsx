@@ -34,7 +34,7 @@ export default class SlidesComponent extends React.Component {
 SlidesComponent.propTypes = {
     tv: propTypes.tv.isRequired,
     animate: PropTypes.bool,
-    currentSlide: propTypes.slide.isRequired,
+    currentSlide: propTypes.slide,
 };
 
 SlidesComponent.defaultProps = {

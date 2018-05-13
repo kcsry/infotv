@@ -38,6 +38,8 @@ Notes of other persuasions
   * `?slow=1` -- disable transitions (for poor ol' Raspberry Pis)
   * `?loc=location` -- show only the `location` location on `nownext`
     slides (useful for room-specific schedule displays)
+  * `?deck=deckname` -- show slides from deck `deckname` instead of
+    default deck
 * Setting the environment variable `INFOTV_STYLE` to something other than
   the implicit "desucon" makes the Webpack build process read styles
   from another `styles/...` subdirectory when creating the bundle.

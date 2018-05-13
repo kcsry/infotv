@@ -98,16 +98,19 @@ class InfoTvView(View):
         event_slug = self.get_event_slug()
         try:
             deck = SlideDeck.objects.get(event_slug=event_slug, current=True)
-            deck_data = {"id": deck.pk}
-            deck_data.update(deck.data)
+            deck_id = deck.pk
+            data = deck.data
         except ObjectDoesNotExist:
-            deck_data = {
-                "id": "missing",
-                "slides": []
+            data = {
+                "decks": {
+                    "default": []
+                }
             }
+            deck_id = "missing"
         datum_q = Q(event_slug=event_slug) | Q(event_slug__isnull=True)
         return JsonResponse({
-            "deck": deck_data,
+            "id": deck_id,
+            "data": data,
             "datums": dict(
                 (d.key, d.serialize())
                 for d in Datum.objects.filter(datum_q)
@@ -120,7 +123,6 @@ class InfoTvView(View):
         event_slug = self.get_event_slug()
         data = json.loads(self.request.POST["data"])
         with atomic():
-            data.pop("id", None)
             SlideDeck.objects.filter(
                 event_slug=event_slug
             ).update(current=False)

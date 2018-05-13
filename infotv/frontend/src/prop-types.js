@@ -1,9 +1,12 @@
 import { PropTypes } from "react";
 
 export default {
-    deck: PropTypes.shape({
-        eep: PropTypes.string,
+    data: PropTypes.shape({
+        decks: PropTypes.object,
+        defaultDeck: PropTypes.array,
+        eep: PropTypes.string
     }),
+    deckName: PropTypes.string,
     slide: PropTypes.shape({
         src: PropTypes.string,
         config: PropTypes.string,
