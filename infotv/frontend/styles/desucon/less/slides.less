@@ -145,13 +145,30 @@ body.tall {
 .anime-slide {
     text-align: center;
     font-size: 3vmax;
-    .now {
-      font-size: 4vmax;
-    }
-    .next-header {
-      padding-top: 5rem;
-    }
-    .now-header, .next-header {
-      font-size: 2vmax;
+    .container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+        .now, .next {
+            width: 45vmax;
+            .header {
+                font-size: 2vmax;
+                margin-top: 2vmax;
+            }
+            .name {
+                margin-top: 1vmax;
+                margin-bottom: 3vmax;
+            }
+            img {
+                max-width: 25vmax;
+                max-height: 25vmax;
+                margin-bottom: 2vmax;
+            }
+            .text {
+                font-size: 2vmax;
+                margin-bottom: 2vmax;
+            }
+        }
     }
 }
