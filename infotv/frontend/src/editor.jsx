@@ -108,7 +108,16 @@ export default class EditorComponent extends React.Component {
         }
         const slides = this.props.deck.slides;
         const options = slides.map((s, i) => {
-            let text = `Slide ${i + 1} (${s.type}) [${s.id}]`;
+            let text = `Slide ${i + 1} (${s.type}) `;
+            if (s.type === "text") {
+                let contentTrim = s.content || "";
+                if (contentTrim.length > 15) {
+                    contentTrim = `${contentTrim.substr(0, 15)}...`;
+                }
+                text += `"${contentTrim}"`;
+            } else {
+                text += `[${s.id}]`;
+            }
             if (s.duration <= 0) text += " (ei päällä)";
             return (<option key={s.id} value={s.id}>{text}</option>);
         });
@@ -122,10 +131,10 @@ export default class EditorComponent extends React.Component {
                 <button onClick={this.confirmAndPublish}>Julkaise muutokset</button>
             </div>
             <div className="eep-editor toolbar">
-                <label>
+                <label htmlFor="eep-input">
                     Erikoisviesti:&nbsp;
-                    <input value={this.props.deck.eep || ""} onChange={this.eepChanged} />
                 </label>
+                <input value={this.props.deck.eep || ""} onChange={this.eepChanged} id="eep-input" />
             </div>
             <div className="slide-selector toolbar">
                 <select value={currentSlide ? currentSlide.id : ""} onChange={this.slideChanged} id="editor-select-slide">{options}</select>

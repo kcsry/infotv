@@ -1,9 +1,9 @@
 #content {
-    font: 3vmax "Clear Sans", sans-serif;
+    font-size: 3vmax;
     position: fixed;
-    left: 2vmax;
+    left: 3vmax;
     top: 3vmax;
-    right: 2vmax;
+    right: 3vmax;
     bottom: 3vmax;
     p {
         margin: 0
@@ -69,6 +69,35 @@
     }
 }
 
+.nownext-single-slide {
+    margin: 0 2vmax;
+
+    .loc {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .ntitle, hr {
+        opacity: 0.75;
+    }
+
+    hr {
+        margin: 3vmax 0;
+    }
+
+    .times, .title {
+        margin-left: 2vmax;
+    }
+
+    .times {
+        font-weight: bold;
+    }
+
+    .soon .times {
+        color: orange;
+    }
+}
+
 body.tall {
     .ntitle {
         font-size: 100%;
@@ -107,16 +136,39 @@ body.tall {
     :first-child { margin-top: 0; }
 }
 
+.clock-placeholder {
+    float: right;
+    width: 10vmax;
+    height: 7vmax;
+}
+
 .anime-slide {
     text-align: center;
     font-size: 3vmax;
-    .now {
-      font-size: 4vmax;
-    }
-    .next-header {
-      padding-top: 5rem;
-    }
-    .now-header, .next-header {
-      font-size: 2vmax;
+    .container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+        .now, .next {
+            width: 45vmax;
+            .header {
+                font-size: 2vmax;
+                margin-top: 2vmax;
+            }
+            .name {
+                margin-top: 1vmax;
+                margin-bottom: 3vmax;
+            }
+            img {
+                max-width: 25vmax;
+                max-height: 25vmax;
+                margin-bottom: 2vmax;
+            }
+            .text {
+                font-size: 2vmax;
+                margin-bottom: 2vmax;
+            }
+        }
     }
 }
