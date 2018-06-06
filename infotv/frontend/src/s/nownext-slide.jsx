@@ -28,30 +28,24 @@ function renderProgram(prog) {
     );
 }
 
+function renderSingleLocFragment(title, times, prog) {
+    return (
+        <div className={times.className}>
+            <div className="ntitle">{title}</div>
+            <div className="times">{times.startTime} &ndash; {times.endTime}</div>
+            <div className="title">{prog.title}</div>
+        </div>
+    );
+}
+
 function renderSingleLoc(loc, currentProg, nextProg) {
-    let nowElems = null;
-    if (currentProg) {
-        const nowTimes = getTimes(currentProg);
-        nowElems = (<div className={nowTimes.className}>
-            <div className="ntitle">Nyt</div>
-            <div className="times">{nowTimes.startTime} &ndash; {nowTimes.endTime}</div>
-            <div className="title">{currentProg.title}</div>
-        </div>);
-    }
-    let nextElems = null;
-    if (nextProg) {
-        const nextTimes = getTimes(nextProg);
-        nextElems = (<div className={nextTimes.className}>
-            <div className="ntitle">Seuraavaksi</div>
-            <div className="times">{nextTimes.startTime} &ndash; {nextTimes.endTime}</div>
-            <div className="title">{nextProg.title}</div>
-        </div>);
-    }
+    const nowElems = (currentProg ? renderSingleLocFragment("Nyt", getTimes(currentProg), currentProg) : null);
+    const nextElems = (nextProg ? renderSingleLocFragment("Seuraavaksi", getTimes(nextProg), nextProg) : null);
 
     return (<div className="slide nownext-single-slide">
         <div className="loc">{loc}</div>
         {nowElems}
-        {nowElems != null && nextElems != null ? <hr /> : null}
+        {nowElems != null && nextElems != null ? <hr/> : null}
         {nextElems}
     </div>);
 }
