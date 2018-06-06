@@ -1,6 +1,7 @@
 import React, { PropTypes } from "react";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group";
 import propTypes from "./prop-types";
+
 const slideComponents = require("./s").default.views;
 
 export default class SlidesComponent extends React.Component {
@@ -17,7 +18,11 @@ export default class SlidesComponent extends React.Component {
         let slideComponent = this.getSlideComponent(slideData);
         if (this.props.animate) {
             slideComponent = (
-                <ReactCSSTransitionGroup transitionName="slide" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
+                <ReactCSSTransitionGroup
+                    transitionName="slide"
+                    transitionEnterTimeout={1000}
+                    transitionLeaveTimeout={1000}
+                >
                     {slideComponent}
                 </ReactCSSTransitionGroup>
             );
@@ -30,4 +35,8 @@ SlidesComponent.propTypes = {
     tv: propTypes.tv.isRequired,
     animate: PropTypes.bool,
     currentSlide: propTypes.slide.isRequired,
+};
+
+SlidesComponent.defaultProps = {
+    animate: false,
 };

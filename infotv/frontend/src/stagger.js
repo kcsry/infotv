@@ -1,19 +1,32 @@
+/* eslint-disable no-bitwise */
 import _ from "lodash";
 
+function forceInt(val) {
+    return parseInt(`${val}`, 10);
+}
+
+function random(min, max) {
+    return min + Math.random() * (max - min);
+}
+
 function Stagger(initialOptions) {
-    const options = _.extend({
-        autostart: true,
-        context: null,
-        arguments: [],
-        callback: () => {},
-    }, initialOptions);
+    const options = _.extend(
+        {
+            autostart: true,
+            context: null,
+            arguments: [],
+            callback: () => {},
+        },
+        initialOptions
+    );
     const ival = options.interval;
     if (ival) {
-        options.min = ival[0];
-        options.max = ival[1];
+        const [min, max] = ival;
+        options.min = min;
+        options.max = max;
     }
-    options.min = 0 | options.min;
-    options.max = 0 | options.max;
+    options.min = forceInt(options.min);
+    options.max = forceInt(options.max);
     if (options.min < 0 || options.max < 0 || options.max < options.min) {
         throw new Error(`Invalid interval: ${options.min}..${options.max}`);
     }
@@ -24,7 +37,7 @@ function Stagger(initialOptions) {
 
 Stagger.prototype.start = function start() {
     this.stop();
-    const timeout = 0 | (this.options.min + Math.random() * (this.options.max - this.options.min));
+    const timeout = Math.floor(random(this.options.min, this.options.max));
     if (timeout <= 0) throw new Error("Invalid timeout");
     this.timer = setTimeout(() => {
         this.start();
@@ -39,6 +52,6 @@ Stagger.prototype.stop = function stop() {
     }
 };
 
-export default function (options) {
+export default function(options) {
     return new Stagger(options);
 }

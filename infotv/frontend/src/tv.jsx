@@ -1,16 +1,18 @@
+/* eslint-disable no-console */
 import React from "react";
 import QS from "query-string";
+import _ from "lodash";
+
 import SlidesComponent from "./slides.jsx";
 import OverlayComponent from "./overlay.jsx";
 import EditorComponent from "./editor.jsx";
 import DatumManager from "./datum";
-import _ from "lodash";
 import stagger from "./stagger";
 import config from "./config";
 import { fetchJSON } from "./utils";
 
 function checkTallness() {
-    document.body.classList.toggle("tall", (window.innerWidth < window.innerHeight));
+    document.body.classList.toggle("tall", window.innerWidth < window.innerHeight);
 }
 
 export default class TVApp extends React.Component {
@@ -34,9 +36,18 @@ export default class TVApp extends React.Component {
 
     componentWillMount() {
         const self = this;
-        this.deckUpdater = stagger({ interval: [50 * 1000, 70 * 1000], callback: self.requestDeck });
-        this.scheduleUpdater = stagger({ interval: [60 * 4 * 1000, 60 * 6 * 1000], callback: self.requestSchedule });
-        this.socialUpdater = stagger({ interval: [50 * 1000, 90 * 1000], callback: self.requestSocial });
+        this.deckUpdater = stagger({
+            interval: [50 * 1000, 70 * 1000],
+            callback: self.requestDeck,
+        });
+        this.scheduleUpdater = stagger({
+            interval: [60 * 4 * 1000, 60 * 6 * 1000],
+            callback: self.requestSchedule,
+        });
+        this.socialUpdater = stagger({
+            interval: [50 * 1000, 90 * 1000],
+            callback: self.requestSocial,
+        });
         this.slideSwitchTimer = setInterval(self.slideSwitchTick, 3500);
         this.madokaTimer = setInterval(self.madokaTick, 10000);
         this.requestDeck();
@@ -69,12 +80,18 @@ export default class TVApp extends React.Component {
     nextSlide() {
         let ticksUntilNextSlide = 1;
         let newSlideIndex = null;
-        for (let offset = 1; offset < 30; offset++) {
-            newSlideIndex = Math.max(0, this.state.slideIndex + offset) % this.state.deck.slides.length;
-            const newSlide = this.state.deck.slides[newSlideIndex];
+        const { deck } = this.state;
+        for (let offset = 1; offset < 30; offset += 1) {
+            newSlideIndex = Math.max(0, this.state.slideIndex + offset) % deck.slides.length;
+            const newSlide = deck.slides[newSlideIndex];
 
             if (newSlide) {
-                if ((0 | newSlide.duration) <= 0) continue; // skip zero-duration slides
+                // eslint-disable-next-line no-bitwise
+                if ((0 | newSlide.duration) <= 0) {
+                    // skip zero-duration slides
+                    // eslint-disable-next-line no-continue
+                    continue;
+                }
                 ticksUntilNextSlide = newSlide.duration;
                 break;
             }
@@ -92,53 +109,52 @@ export default class TVApp extends React.Component {
 
     addNewSlide() {
         const slide = { type: "text", duration: 1, id: `s${Date.now().toString(30)}` };
-        const deck = this.state.deck;
+        const { deck } = this.state;
         deck.slides.splice(this.state.slideIndex, 0, slide);
         this.setState({ deck });
         this.viewSlideById(slide.id);
     }
 
     deleteCurrentSlide() {
-        const deck = this.state.deck;
+        const { deck } = this.state;
         deck.slides.splice(this.state.slideIndex, 1);
         this.setState({ deck, slideIndex: 0 });
     }
 
     requestDeck() {
         if (this.state.edit) return false; // When in edit mode, prevent auto-update
-
-        fetchJSON(`${location.pathname}?${QS.stringify({ action: "get_deck" })}`)
-            .then((data) => {
-                const deck = data.deck;
+        // eslint-disable-next-line no-restricted-globals
+        fetchJSON(`${location.pathname}?${QS.stringify({ action: "get_deck" })}`).then(
+            ({ deck, datums }) => {
                 if (!this.state.deck || this.state.deck.id !== deck.id) {
                     this.setState({ deck, slideIndex: -1 });
                     this.nextSlide();
                     console.log("new deck", deck);
                 }
-                DatumManager.update(data.datums || {});
-            });
+                DatumManager.update(datums || {});
+            }
+        );
 
         return true;
     }
 
     requestSchedule() {
-        fetchJSON(`/api/schedule/json2/?${QS.stringify({ event: config.event })}`)
-            .then((data) => {
-                DatumManager.setValue("schedule", data);
-                this.forceUpdate();
-            });
+        fetchJSON(`/api/schedule/json2/?${QS.stringify({ event: config.event })}`).then((data) => {
+            DatumManager.setValue("schedule", data);
+            this.forceUpdate();
+        });
     }
 
     requestSocial() {
-        fetchJSON("/api/social/")
-            .then((data) => {
-                DatumManager.setValue("social", data);
-                this.forceUpdate();
-            });
+        fetchJSON("/api/social/").then((data) => {
+            DatumManager.setValue("social", data);
+            this.forceUpdate();
+        });
     }
 
+    // eslint-disable-next-line class-methods-use-this
     madokaTick() {
-        const shouldMadoka = ((new Date()).getHours() < 1 && (Math.random() < 0.1));
+        const shouldMadoka = new Date().getHours() < 1 && Math.random() < 0.1;
         document.getElementById("content").classList.toggle("madoka", shouldMadoka);
     }
 
@@ -154,16 +170,25 @@ export default class TVApp extends React.Component {
         } else if (this.state.deck && this.state.deck.slides) {
             currentSlide = this.state.deck.slides[this.state.slideIndex];
         }
-        const editor = (this.state.edit ? <div id="editor" key="editor"><EditorComponent tv={this} deck={this.state.deck} currentSlide={currentSlide} /></div> : null);
-        const eep = (this.state.deck && this.state.deck.eep ? <div id="eep">{this.state.deck.eep}</div> : null);
-        const animate = !(this.state.edit || config.slow);
-        return (<div>
-            <div id="content" key="content">
-                <OverlayComponent />
-                <SlidesComponent tv={this} currentSlide={currentSlide} animate={animate} />
+        const editor = this.state.edit ? (
+            <div id="editor" key="editor">
+                <EditorComponent tv={this} deck={this.state.deck} currentSlide={currentSlide} />
             </div>
-            {eep}
-            {editor}
-        </div>);
+        ) : null;
+        const eep =
+            this.state.deck && this.state.deck.eep ? (
+                <div id="eep">{this.state.deck.eep}</div>
+            ) : null;
+        const animate = !(this.state.edit || config.slow);
+        return (
+            <div>
+                <div id="content" key="content">
+                    <OverlayComponent />
+                    <SlidesComponent tv={this} currentSlide={currentSlide} animate={animate} />
+                </div>
+                {eep}
+                {editor}
+            </div>
+        );
     }
 }

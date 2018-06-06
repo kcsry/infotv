@@ -8,7 +8,7 @@ const production = process.argv.indexOf("-p") !== -1;
 
 const config = {
     context: __dirname,
-    entry: ["whatwg-fetch", "./src/main.js"],
+    entry: ["whatwg-fetch", "./src/main.jsx"],
     bail: true,
     devtool: "source-map",
     output: {
@@ -34,12 +34,8 @@ const config = {
             "current-style": `../styles/${CURRENT_STYLE}/less/style.less`,
         },
     },
-    plugins: [
-        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|fi/),
-    ],
-    postcss: [
-        autoprefixer({ browsers: ["last 2 versions"] }),
-    ],
+    plugins: [new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/)],
+    postcss: [autoprefixer({ browsers: ["last 2 versions"] })],
 };
 
 if (production) {

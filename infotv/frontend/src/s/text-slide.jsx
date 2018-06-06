@@ -1,17 +1,23 @@
+/* eslint-disable react/no-danger */
 /* eslint "react/no-multi-comp": 0 */
 
 import React from "react";
-const markdown = require("markdown-it")({
-    html: true,
-    breaks: true
-});
 import propTypes from "../prop-types";
 
-function TextSlide(props) {
-    const slide = props.slide;
+const markdown = require("markdown-it")({
+    html: true,
+    breaks: true,
+});
+
+function TextSlide({ slide }) {
     const html = markdown.render(slide.content || "");
     // clock-placeholder is a kludge to fix text wrapping around floated clock-element.
-    return <div className="slide text-slide"><div className="clock-placeholder" /><span dangerouslySetInnerHTML={{ __html: html }} /></div>;
+    return (
+        <div className="slide text-slide">
+            <div className="clock-placeholder" />
+            <span dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+    );
 }
 
 TextSlide.propTypes = {
@@ -30,10 +36,12 @@ class TextSlideEditor extends React.Component {
     }
 
     render() {
-        const slide = this.props.slide;
-        return (<div className="text-slide-editor">
-            <textarea value={slide.content || ""} onChange={this.setContent} />
-        </div>);
+        const { slide } = this.props;
+        return (
+            <div className="text-slide-editor">
+                <textarea value={slide.content || ""} onChange={this.setContent} />
+            </div>
+        );
     }
 }
 
