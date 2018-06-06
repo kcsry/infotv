@@ -5,7 +5,7 @@ import propTypes from "../prop-types";
 import { isImageURL } from "../utils";
 
 function ImageSlide(props) {
-    const slide = props.slide;
+    const { slide } = props;
     const url = slide.src;
     const style = {};
     if (isImageURL(url)) style.backgroundImage = `url(${url})`;
@@ -28,10 +28,15 @@ class ImageSlideEditor extends React.Component {
     }
 
     render() {
-        const slide = this.props.slide;
-        return (<div className="image-slide-editor">
-            <label>Kuvan osoite: <input type="url" value={slide.src || ""} onChange={this.setSrc} /></label>
-        </div>);
+        const { slide } = this.props;
+        return (
+            <div className="image-slide-editor">
+                <label>
+                    Kuvan osoite:{" "}
+                    <input type="url" value={slide.src || ""} onChange={this.setSrc} />
+                </label>
+            </div>
+        );
     }
 }
 

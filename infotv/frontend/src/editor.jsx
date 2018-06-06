@@ -1,8 +1,10 @@
+/* eslint-disable no-restricted-globals */
 import React from "react";
 import _ from "lodash";
-const editorComponents = require("./s").default.editors;
 import propTypes from "./prop-types";
 import { fetchJSON } from "./utils";
+
+const editorComponents = require("./s").default.editors;
 
 export default class EditorComponent extends React.Component {
     constructor(props, context) {
@@ -18,28 +20,48 @@ export default class EditorComponent extends React.Component {
 
     getSlideEditor(currentSlide) {
         const editorComponentClass = editorComponents[currentSlide.type];
-        const editorComponent = (editorComponentClass ? editorComponentClass({ slide: currentSlide, editor: this, tv: this.props.tv }) : `no editor for ${currentSlide.type}`);
-        const slideTypeOptions = _.keys(editorComponents).map((t) => <option key={t} value={t}>{t}</option>);
-        const slideTypeSelect = (<select key="slide-type" value={currentSlide.type} onChange={this.slideTypeChanged}>{slideTypeOptions}</select>);
-        const slideDurationInput = (<input type="number" value={currentSlide.duration} min="0" max="10" onChange={this.slideDurationChanged} />);
+        const editorComponent = editorComponentClass
+            ? editorComponentClass({ slide: currentSlide, editor: this, tv: this.props.tv })
+            : `no editor for ${currentSlide.type}`;
+        const slideTypeOptions = _.keys(editorComponents).map((t) => (
+            <option key={t} value={t}>
+                {t}
+            </option>
+        ));
+        const slideTypeSelect = (
+            <select key="slide-type" value={currentSlide.type} onChange={this.slideTypeChanged}>
+                {slideTypeOptions}
+            </select>
+        );
+        const slideDurationInput = (
+            <input
+                type="number"
+                value={currentSlide.duration}
+                min="0"
+                max="10"
+                onChange={this.slideDurationChanged}
+            />
+        );
 
-        return (<div className="slide-editor">
-            <div className="toolbar">
-                <button onClick={this.props.tv.deleteCurrentSlide}>Poista</button>
-                <button onClick={this.moveSlideUp}>Siirrä ylös</button>
-                <button onClick={this.moveSlideDown}>Siirrä alas</button>
+        return (
+            <div className="slide-editor">
+                <div className="toolbar">
+                    <button onClick={this.props.tv.deleteCurrentSlide}>Poista</button>
+                    <button onClick={this.moveSlideUp}>Siirrä ylös</button>
+                    <button onClick={this.moveSlideDown}>Siirrä alas</button>
+                </div>
+                <div className="toolbar">
+                    <label>Sliden tyyppi: {slideTypeSelect}</label>
+                    <label>Sliden kesto: {slideDurationInput}&times;</label>
+                </div>
+                {editorComponent}
             </div>
-            <div className="toolbar">
-                <label>Sliden tyyppi: {slideTypeSelect}</label>
-                <label>Sliden kesto: {slideDurationInput}&times;</label>
-            </div>
-            {editorComponent}
-        </div>);
+        );
     }
 
     eepChanged(event) {
         const eep = event.target.value;
-        this.props.deck.eep = (eep && eep.length ? eep : null);
+        this.props.deck.eep = eep && eep.length ? eep : null;
         this.props.tv.forceUpdate();
     }
 
@@ -54,7 +76,7 @@ export default class EditorComponent extends React.Component {
     }
 
     moveSlide(slide_, direction) {
-        const slides = this.props.deck.slides;
+        const { slides } = this.props.deck;
         const idx = slides.indexOf(slide_);
         if (idx === -1) return;
         const slide = slides.splice(idx, 1)[0];
@@ -75,7 +97,7 @@ export default class EditorComponent extends React.Component {
     }
 
     slideDurationChanged(event) {
-        this.props.currentSlide.duration = 0 | event.target.value;
+        this.props.currentSlide.duration = parseInt(event.target.value, 10);
         this.props.tv.forceUpdate();
     }
 
@@ -104,9 +126,9 @@ export default class EditorComponent extends React.Component {
 
     render() {
         if (!this.props.deck) {
-            return (<div>Missing deck :(</div>);
+            return <div>Missing deck :(</div>;
         }
-        const slides = this.props.deck.slides;
+        const { slides } = this.props.deck;
         const options = slides.map((s, i) => {
             let text = `Slide ${i + 1} (${s.type}) `;
             if (s.type === "text") {
@@ -119,31 +141,43 @@ export default class EditorComponent extends React.Component {
                 text += `[${s.id}]`;
             }
             if (s.duration <= 0) text += " (ei päällä)";
-            return (<option key={s.id} value={s.id}>{text}</option>);
+            return (
+                <option key={s.id} value={s.id}>
+                    {text}
+                </option>
+            );
         });
-        const currentSlide = this.props.currentSlide;
+        const { currentSlide } = this.props;
         let slideEditor = null;
         if (currentSlide) {
             slideEditor = this.getSlideEditor(currentSlide);
         }
-        return (<div>
-            <div className="editor-toolbar toolbar">
-                <button onClick={this.confirmAndPublish}>Julkaise muutokset</button>
+        return (
+            <div>
+                <div className="editor-toolbar toolbar">
+                    <button onClick={this.confirmAndPublish}>Julkaise muutokset</button>
+                </div>
+                <div className="eep-editor toolbar">
+                    <label htmlFor="eep-input">Erikoisviesti:&nbsp;</label>
+                    <input
+                        value={this.props.deck.eep || ""}
+                        onChange={this.eepChanged}
+                        id="eep-input"
+                    />
+                </div>
+                <div className="slide-selector toolbar">
+                    <select
+                        value={currentSlide ? currentSlide.id : ""}
+                        onChange={this.slideChanged}
+                        id="editor-select-slide"
+                    >
+                        {options}
+                    </select>
+                    <button onClick={this.props.tv.addNewSlide}>Uusi</button>
+                </div>
+                <div className="slide-editor-ctr">{slideEditor}</div>
             </div>
-            <div className="eep-editor toolbar">
-                <label htmlFor="eep-input">
-                    Erikoisviesti:&nbsp;
-                </label>
-                <input value={this.props.deck.eep || ""} onChange={this.eepChanged} id="eep-input" />
-            </div>
-            <div className="slide-selector toolbar">
-                <select value={currentSlide ? currentSlide.id : ""} onChange={this.slideChanged} id="editor-select-slide">{options}</select>
-                <button onClick={this.props.tv.addNewSlide}>Uusi</button>
-            </div>
-            <div className="slide-editor-ctr">
-                {slideEditor}
-            </div>
-        </div>);
+        );
     }
 }
 

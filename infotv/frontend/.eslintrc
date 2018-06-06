@@ -14,10 +14,19 @@
     "import/resolver": "webpack"
   },
   "rules": {
-    "indent": [2, 4],
-    "quotes": [2, "double"],
+    "arrow-parens": "off",
+    "comma-dangle": "off",
+    "function-paren-newline": "off",
+    "indent": ["error", 4],
+    "jsx-a11y/label-has-for": 0,
     "max-len": 0,
     "no-alert": 0,
-    "react/jsx-indent": ["error", 4]
+    "no-mixed-operators": "off",
+    "prefer-destructuring": "warn",
+    "quotes": ["error", "double"],
+    "react/jsx-indent": ["error", 4],
+    "react/jsx-indent-props": "off",
+    "react/prop-types": "warn",
+    "space-before-function-paren": "off"
   }
 }

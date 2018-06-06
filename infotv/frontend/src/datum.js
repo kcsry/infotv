@@ -1,4 +1,5 @@
 import _ from "lodash";
+
 let datums = {};
 
 export default {
@@ -6,7 +7,9 @@ export default {
         datums = _.extend(datums, data);
     },
     setValue(key, value) {
-        return (datums[key] = { value, mtime: 0, virtual: true });
+        const datum = { value, mtime: 0, virtual: true };
+        datums[key] = datum;
+        return datum;
     },
     getValue(key, defaultValue) {
         const datum = datums[key];

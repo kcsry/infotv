@@ -1,6 +1,5 @@
-
 export function isImageURL(url) {
-    return (/^http.+(jpg|gif|png|svg|jpeg)$/i).test(url || "");
+    return /^http.+(jpg|gif|png|svg|jpeg)$/i.test(url || "");
 }
 
 export function checkStatus(response) {
@@ -9,10 +8,15 @@ export function checkStatus(response) {
     }
     const error = new Error(response.statusText);
     error.response = response;
-    return response.json()
-        .then((body) => { error.body = body; })
+    return response
+        .json()
+        .then((body) => {
+            error.body = body;
+        })
         .catch(() => {}) // Catch body parsing errors and continue
-        .then(() => { throw error; });
+        .then(() => {
+            throw error;
+        });
 }
 
 export function fetchJSON(url, opts = {}) {
