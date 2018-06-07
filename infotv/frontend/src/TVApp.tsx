@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import React from 'react';
 import QS from 'query-string';
-import _ from 'lodash';
+import debounce from 'lodash/debounce';
+import findIndex from 'lodash/findIndex';
 import SlidesComponent from './SlidesComponent';
 import OverlayComponent from './OverlayComponent';
 import EditorComponent from './EditorComponent';
@@ -88,7 +89,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         } else {
             document.body.classList.add('show');
         }
-        window.addEventListener('resize', _.debounce(checkTallness, 200));
+        window.addEventListener('resize', debounce(checkTallness, 200));
         checkTallness();
     }
 
@@ -150,7 +151,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     }
 
     public viewSlideById(id) {
-        const index = _.findIndex(this.getDeck(), (s) => s.id === id);
+        const index = findIndex(this.getDeck(), (s) => s.id === id);
         if (index > -1) {
             this.setState({slideIndex: index});
             console.log('Viewing slide:', index, 'id', id);

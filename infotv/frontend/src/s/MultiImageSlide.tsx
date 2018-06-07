@@ -1,7 +1,6 @@
 /* eslint "react/no-multi-comp": 0 */
 import React, {ChangeEvent, CSSProperties} from 'react';
-import _ from 'lodash';
-import {isImageURL} from '../utils';
+import {forceInt, isImageURL} from '../utils';
 import {Slide} from '../types';
 import {EditorProps, SlideModule, ViewProps} from './types';
 
@@ -10,27 +9,26 @@ interface ParsedImage {
     url: string;
 }
 
+function parseImage(line: string): ParsedImage | undefined {
+    const m = /^(\d+)[;|](http.+)$/.exec(line);
+    if (!m) {
+        return;
+    }
+    const duration = forceInt(m[1]);
+    if (duration <= 0) {
+        return;
+    }
+    if (!isImageURL(m[2])) {
+        return;
+    }
+    return {
+        duration,
+        url: m[2],
+    };
+}
+
 function parseImages(data: string): ParsedImage[] {
-    return _(`${data || ''}`.split('\n'))
-        .map((line) => {
-            const m = /^(\d+)[;|](http.+)$/.exec(line);
-            if (!m) {
-                return null;
-            }
-            const duration = parseInt(m[1], 10);
-            if (duration <= 0) {
-                return null;
-            }
-            if (!isImageURL(m[2])) {
-                return null;
-            }
-            return {
-                duration,
-                url: m[2],
-            };
-        })
-        .compact()
-        .value();
+    return `${data || ''}`.split('\n').map(parseImage).filter(v => v) as ParsedImage[];
 }
 
 interface MultiImageSlide extends Slide {

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import cx from 'classnames';
 import moment from 'moment';
 import React from 'react';
@@ -87,13 +86,13 @@ const NowNextSlideView: React.SFC<ViewProps> = ({config}) => {
     }
     const nowTs = +new Date() / 1000;
     const order = schedule.location_order || [];
-    _.each(order, (loc) => {
+    order.forEach((loc) => {
         if (onlyLoc && onlyLoc !== loc) {
             return;
         }
-        const programs = _.filter(schedule.programs, (prog) => prog.location === loc);
-        const currentProg = _.find(programs, (prog) => nowTs >= prog.start_ts && nowTs < prog.end_ts);
-        const nextProg = _.find(programs, (prog) => prog.start_ts >= nowTs);
+        const programs = schedule.programs.filter((prog) => prog.location === loc);
+        const currentProg = programs.find((prog) => nowTs >= prog.start_ts && nowTs < prog.end_ts);
+        const nextProg = programs.find((prog) => prog.start_ts >= nowTs);
         if (onlyLoc) {
             onlyLocContent = renderSingleLoc(loc, currentProg, nextProg);
         }

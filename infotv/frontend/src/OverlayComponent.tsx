@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import _ from 'lodash';
+import isFinite from 'lodash/isFinite';
 import DatumManager from './DatumManager';
 
 function renderWeather(weather) {
@@ -21,7 +21,7 @@ function renderWeather(weather) {
     } catch (problem) {
         icon = null;
     }
-    const temperatureString = _.isFinite(temperature)
+    const temperatureString = isFinite(temperature)
         ? `${temperature.toLocaleString('fi', {maximumFractionDigits: 1})}°C`
         : '';
     return (
