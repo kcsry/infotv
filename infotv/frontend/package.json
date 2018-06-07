@@ -37,7 +37,6 @@
         "autoprefixer": "^8.6.0",
         "babel-core": "^6.7.4",
         "babel-loader": "^7.1.4",
-        "babel-polyfill": "^6.23.0",
         "babel-preset-env": "^1.7.0",
         "babel-preset-react": "^6.5.0",
         "classnames": "^2.1.1",
@@ -56,8 +55,7 @@
         "style-loader": "^0.21.0",
         "url-loader": "^1.0.1",
         "webpack": "^4.11.1",
-        "webpack-cli": "^3.0.3",
-        "whatwg-fetch": "^2.0.4"
+        "webpack-cli": "^3.0.3"
     },
     "prettier": {
         "printWidth": 100,

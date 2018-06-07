@@ -7,7 +7,7 @@ const outputPublicPath = process.env.PUBLIC_PATH || '/static/infotv';
 
 module.exports = (env, argv) => ({
     context: __dirname,
-    entry: ['whatwg-fetch', './src/main.tsx'],
+    entry: ['./src/main.tsx'],
     bail: true,
     devtool: 'source-map',
     output: {
