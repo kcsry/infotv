@@ -1,7 +1,8 @@
 import React, {CSSProperties} from 'react';
-import moment from 'moment';
+import formatDate from 'date-fns/esm/format';
 import cx from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 import datumManager from '../DatumManager';
 import {SlideModule, ViewProps} from './types';
 
@@ -20,8 +21,8 @@ const renderSocialElement = (element) => {
         animationDuration: `${duration}s`,
     };
     const author = `@${element.author_name.replace(/^@/, '')}`;
-    const time = moment(element.posted_on).format('HH:mm');
-    const mediumIcon = mediumIcons[element.medium] || null;
+    const time = formatDate(element.posted_on, 'HH:mm');
+    const mediumIcon = mediumIcons[element.medium];
     return (
         <div style={style} className={cn} key={element.id}>
             <div className="meta">

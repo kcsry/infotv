@@ -1,6 +1,7 @@
 import cx from 'classnames';
-import moment from 'moment';
 import React from 'react';
+import formatDate from 'date-fns/esm/format';
+
 import datumManager from '../DatumManager';
 import {ViewProps} from './types';
 
@@ -23,14 +24,15 @@ interface Schedule {
 }
 
 function getTimes(prog: Program): ProgramTimes {
-    const startMoment = moment.unix(prog.start_ts);
-    const endMoment = moment.unix(prog.end_ts);
+    const startDate = new Date(prog.start_ts * 1000);
+    const endDate = new Date(prog.end_ts * 1000);
+    const soon = Math.abs(prog.start_ts - prog.end_ts) < 5 * 60;
     return {
-        startTime: startMoment.format('HH:mm'),
-        endTime: endMoment.format('HH:mm'),
+        startTime: formatDate(startDate, 'HH:mm'),
+        endTime: formatDate(endDate, 'HH:mm'),
         className: cx({
             progInfo: true,
-            soon: Math.abs(moment().diff(startMoment)) < 5 * 60 * 1000,
+            soon,
         }),
     };
 }

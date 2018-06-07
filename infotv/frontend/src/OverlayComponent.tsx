@@ -1,5 +1,6 @@
 import React from 'react';
-import moment from 'moment';
+import formatDate from 'date-fns/esm/format';
+
 import isFinite from 'lodash/isFinite';
 import DatumManager from './DatumManager';
 
@@ -47,7 +48,7 @@ export default class OverlayComponent extends React.Component<{}, {}> {
     }
 
     public render() {
-        const text = moment().format('HH:mm');
+        const text = formatDate(new Date(), 'HH:mm');
         const weather = renderWeather(DatumManager.getValue('weather'));
         return (
             <div id="quad">

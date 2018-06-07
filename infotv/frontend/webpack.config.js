@@ -56,7 +56,6 @@ module.exports = (env, argv) => ({
         },
     },
     plugins: [
-        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/),
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify(argv.mode === 'production' ? 'production' : 'development'),
