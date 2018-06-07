@@ -23,6 +23,9 @@ module.exports = (env, argv) => ({
                 use: [
                     {
                         loader: 'awesome-typescript-loader',
+                        options: {
+                            silent: argv.json,
+                        },
                     },
                 ],
             },
