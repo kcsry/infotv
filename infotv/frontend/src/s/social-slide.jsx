@@ -34,7 +34,6 @@ const renderSocialElement = (element) => {
 class SocialSlide extends React.Component {
     constructor(props, context) {
         super(props, context);
-        this.renderElement = this.renderElement.bind(this);
         this.tick = this.tick.bind(this);
 
         this.state = {
