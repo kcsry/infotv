@@ -23,7 +23,7 @@
     "no-alert": 0,
     "no-mixed-operators": "off",
     "prefer-destructuring": "warn",
-    "quotes": ["error", "double"],
+    "quotes": ["error", "single"],
     "react/jsx-indent": ["error", 4],
     "react/jsx-indent-props": "off",
     "react/prop-types": "warn",
