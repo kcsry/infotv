@@ -1,7 +1,7 @@
 import React, {CSSProperties} from 'react';
 import formatDate from 'date-fns/esm/format';
 import cx from 'classnames';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 import datumManager from '../DatumManager';
 import {SlideModule, ViewProps} from './types';
