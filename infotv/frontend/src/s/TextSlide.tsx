@@ -3,7 +3,7 @@ import Markdown from 'react-markdown';
 import {Slide} from '../types';
 import {EditorProps, ViewProps} from './types';
 
-interface TextSlide extends Slide {
+export interface TextSlide extends Slide {
     content?: string;
 }
 

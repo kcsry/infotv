@@ -6,7 +6,7 @@ import findIndex from 'lodash/findIndex';
 import SlidesComponent from './SlidesComponent';
 import OverlayComponent from './OverlayComponent';
 import EditorComponent from './EditorComponent';
-import d from './DatumManager';
+import datumManager from './DatumManager';
 import Stagger from './Stagger';
 import fetchJSON from './fetchJSON';
 import {forceInt} from './utils';
@@ -40,17 +40,6 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
 
     constructor(props) {
         super(props);
-        this.madokaTick = this.madokaTick.bind(this);
-        this.requestDeck = this.requestDeck.bind(this);
-        this.requestSchedule = this.requestSchedule.bind(this);
-        this.requestSocial = this.requestSocial.bind(this);
-        this.slideSwitchTick = this.slideSwitchTick.bind(this);
-        this.addNewSlide = this.addNewSlide.bind(this);
-        this.deleteCurrentSlide = this.deleteCurrentSlide.bind(this);
-        this.getDeck = this.getDeck.bind(this);
-        this.addNewDeck = this.addNewDeck.bind(this);
-        this.deleteCurrentDeck = this.deleteCurrentDeck.bind(this);
-        this.changeDeck = this.changeDeck.bind(this);
         const {config} = props;
         this.state = {
             data: {decks: {}},
@@ -101,7 +90,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         clearInterval(this.slideSwitchTimer);
     }
 
-    public getDeck(): Deck {
+    public getDeck = (): Deck => {
         const {data} = this.state;
         if (!data.hasOwnProperty('decks')) {
             // Data has not been loaded yet
@@ -110,9 +99,9 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         // Fallback to default deck if preferred deck is not available
         const requestedDeckName = this.state.currentDeckName || 'default';
         return data.decks[requestedDeckName] || [];
-    }
+    };
 
-    public slideSwitchTick() {
+    private slideSwitchTick = () => {
         if (this.state.edit) {
             return false;
         }
@@ -122,9 +111,9 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             this.nextSlide();
         }
         return true;
-    }
+    };
 
-    public nextSlide() {
+    private nextSlide = () => {
         let ticksUntilNextSlide = 1;
         let newSlideIndex;
         const deck = this.getDeck();
@@ -143,33 +132,33 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             }
         }
         this.setState({slideIndex: newSlideIndex, ticksUntilNextSlide});
-    }
+    };
 
-    public viewSlideById(id) {
+    public viewSlideById = (id: string) => {
         const index = findIndex(this.getDeck(), (s) => s.id === id);
         if (index > -1) {
             this.setState({slideIndex: index});
             console.log('Viewing slide:', index, 'id', id);
         }
-    }
+    };
 
-    public addNewSlide() {
+    public addNewSlide = () => {
         const slide = {type: 'text', duration: 1, id: `s${Date.now().toString(30)}`};
         const deck = this.getDeck();
         deck.splice(this.state.slideIndex, 0, slide);
         const {data} = this.state;
         this.setState({data});
         this.viewSlideById(slide.id);
-    }
+    };
 
-    public deleteCurrentSlide() {
+    public deleteCurrentSlide = () => {
         const deck = this.getDeck();
         deck.splice(this.state.slideIndex, 1);
         const {data} = this.state;
         this.setState({data, slideIndex: 0});
-    }
+    };
 
-    public addNewDeck(newDeckName) {
+    public addNewDeck = (newDeckName: string) => {
         const {data} = this.state;
         if (!newDeckName || newDeckName.length <= 0 || data.decks.hasOwnProperty(newDeckName)) {
             alert('Pakalta puuttuu nimi tai se on jo olemassa.');
@@ -179,9 +168,9 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         this.setState({data, currentDeckName: newDeckName, slideIndex: 0}, () => {
             this.addNewSlide();
         });
-    }
+    };
 
-    public deleteCurrentDeck() {
+    public deleteCurrentDeck = () => {
         if (this.state.currentDeckName === 'default') {
             alert('Default-pakkaa ei voi poistaa.');
             return;
@@ -189,16 +178,17 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         const {data} = this.state;
         delete data.decks[this.state.currentDeckName];
         this.setState({data});
-    }
+    };
 
-    public changeDeck(newDeckName) {
+    public changeDeck = (newDeckName: string) => {
         this.setState({currentDeckName: newDeckName, slideIndex: 0});
-    }
+    };
 
-    public requestDeck() {
+    private requestDeck = () => {
+        // When in edit mode, prevent auto-update
         if (this.state.edit) {
             return false;
-        } // When in edit mode, prevent auto-update
+        }
         // eslint-disable-next-line no-restricted-globals
         fetchJSON(`${location.pathname}?${QS.stringify({action: 'get_deck'})}`).then(
             ({id, data, datums}) => {
@@ -211,32 +201,32 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
                     this.setState({data, id, slideIndex: -1});
                     this.nextSlide();
                 }
-                d.update(datums || {});
+                datumManager.update(datums || {});
             },
         );
         return true;
-    }
+    };
 
-    public requestSchedule() {
+    private requestSchedule = () => {
         const {config} = this.props;
         fetchJSON(`/api/schedule/json2/?${QS.stringify({event: config.event})}`).then((data) => {
-            d.setValue('schedule', data);
+            datumManager.setValue('schedule', data);
             this.forceUpdate();
         });
-    }
+    };
 
-    public requestSocial() {
+    private requestSocial = () => {
         fetchJSON('/api/social/').then((data) => {
-            d.setValue('social', data);
+            datumManager.setValue('social', data);
             this.forceUpdate();
         });
-    }
+    };
 
     // eslint-disable-next-line class-methods-use-this
-    public madokaTick() {
+    private madokaTick = () => {
         const shouldMadoka = new Date().getHours() < 1 && Math.random() < 0.1;
         document.getElementById('content')!.classList.toggle('madoka', shouldMadoka);
-    }
+    };
 
     public enableEditing() {
         this.setState({edit: true});

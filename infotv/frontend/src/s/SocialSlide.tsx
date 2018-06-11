@@ -39,13 +39,9 @@ interface SocialSlideState {
 }
 
 class SocialSlideView extends React.Component<ViewProps, SocialSlideState> {
-    constructor(props, context) {
-        super(props, context);
-        this.tick = this.tick.bind(this);
-        this.state = {
-            frame: 0,
-        };
-    }
+    public state: SocialSlideState = {
+        frame: 0,
+    };
 
     public componentWillMount() {
         this.setState({timer: window.setInterval(this.tick, 600)});
@@ -55,9 +51,9 @@ class SocialSlideView extends React.Component<ViewProps, SocialSlideState> {
         clearInterval(this.state.timer);
     }
 
-    public tick() {
+    private tick = () => {
         this.setState({frame: this.state.frame + 1});
-    }
+    };
 
     public render() {
         const items = datumManager.getValue('social') || [];
