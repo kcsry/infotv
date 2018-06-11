@@ -107,14 +107,9 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             // Data has not been loaded yet
             return [];
         }
-        if (
-            !this.state.currentDeckName ||
-            !data.decks.hasOwnProperty(this.state.currentDeckName)
-        ) {
-            // Fallback to default deck if preferred deck is not available
-            return data.decks.default;
-        }
-        return data.decks[this.state.currentDeckName];
+        // Fallback to default deck if preferred deck is not available
+        const requestedDeckName = this.state.currentDeckName || 'default';
+        return data.decks[requestedDeckName] || [];
     }
 
     public slideSwitchTick() {
