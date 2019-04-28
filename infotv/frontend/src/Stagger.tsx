@@ -31,7 +31,7 @@ export default class Stagger {
     private timer?: number;
 
     constructor(initialOptions: Partial<StaggerOptions> = {}) {
-        const options: StaggerOptions = Object.assign({}, Stagger.DEFAULT_OPTIONS, initialOptions);
+        const options: StaggerOptions = {...Stagger.DEFAULT_OPTIONS, ...initialOptions};
         options.min = forceInt(options.min);
         options.max = forceInt(options.max);
         if (options.min < 0 || options.max < 0 || options.max < options.min) {

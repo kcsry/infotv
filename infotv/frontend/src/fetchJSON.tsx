@@ -25,8 +25,7 @@ export default function fetchJSON(
     url: string,
     opts: Partial<RequestInit> = {},
 ): Promise<any> {
-    const defaultOpts: Partial<RequestInit> = {credentials: 'same-origin'};
-    return fetch(url, Object.assign({}, defaultOpts, opts))
+    return fetch(url, {credentials: 'same-origin', ...opts})
         .then(checkStatus)
         .then((response) => response.json());
 }
