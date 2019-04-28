@@ -16,13 +16,12 @@ function renderWeather(weather) {
         temperature = null;
     }
     try {
-        // eslint-disable-next-line prefer-destructuring
         icon = weather.weather[0].icon;
         icon = <img src={`http://openweathermap.org/img/w/${icon}.png`} alt="weather icon"/>;
     } catch (problem) {
         icon = null;
     }
-    const temperatureString = isFinite(temperature)
+    const temperatureString = temperature && isFinite(temperature)
         ? `${temperature.toLocaleString('fi', {maximumFractionDigits: 1})}°C`
         : '';
     return (

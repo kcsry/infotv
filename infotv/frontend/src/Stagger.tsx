@@ -11,7 +11,7 @@ function noop() {
 export interface StaggerOptions {
     autostart: boolean;
     context: any;
-    arguments: any[];
+    arguments: [];
     callback: () => void;
     min: number;
     max: number;

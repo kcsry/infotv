@@ -1,4 +1,3 @@
-/* eslint "react/no-multi-comp": 0 */
 import React, {ChangeEvent, CSSProperties} from 'react';
 import {forceInt, isImageURL} from '../utils';
 import {Slide} from '../types';
@@ -94,7 +93,6 @@ class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, Mu
         if (image) {
             style.backgroundImage = `url(${image.url})`;
         }
-        // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
         return <div className="slide image-slide" style={style} onClick={this.reset}/>;
     }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React from 'react';
 import QS from 'query-string';
 import debounce from 'lodash/debounce';
@@ -121,10 +120,8 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             newSlideIndex = Math.max(0, this.state.slideIndex + offset) % deck.length;
             const newSlide = deck[newSlideIndex];
             if (newSlide) {
-                // eslint-disable-next-line no-bitwise
                 if (forceInt(newSlide.duration) <= 0) {
                     // skip zero-duration slides
-                    // eslint-disable-next-line no-continue
                     continue;
                 }
                 ticksUntilNextSlide = newSlide.duration;
@@ -189,7 +186,6 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         if (this.state.edit) {
             return false;
         }
-        // eslint-disable-next-line no-restricted-globals
         fetchJSON(`${location.pathname}?${QS.stringify({action: 'get_deck'})}`).then(
             ({id, data, datums}) => {
                 if (
@@ -222,7 +218,6 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         });
     };
 
-    // eslint-disable-next-line class-methods-use-this
     private madokaTick = () => {
         const shouldMadoka = new Date().getHours() < 1 && Math.random() < 0.1;
         document.getElementById('content')!.classList.toggle('madoka', shouldMadoka);

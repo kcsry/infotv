@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 import React from 'react';
 import fetchJSON from './fetchJSON';
 import slideModules from './s';
