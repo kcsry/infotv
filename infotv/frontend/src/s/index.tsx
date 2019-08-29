@@ -1,4 +1,3 @@
-import React from 'react';
 import DummyEditor from './DummyEditor';
 import TextSlide from './TextSlide';
 import ImageSlide from './ImageSlide';

@@ -4,7 +4,7 @@ import cx from 'classnames';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 import datumManager from '../DatumManager';
-import {SlideModule, ViewProps} from './types';
+import {ViewProps} from './types';
 
 const mediumIcons = {
     ig: 'fa fa-instagram',

@@ -82,16 +82,22 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     }
 
     public componentWillUnmount() {
-        this.deckUpdater!.stop();
-        this.scheduleUpdater!.stop();
-        this.socialUpdater!.stop();
+        if (this.deckUpdater) {
+            this.deckUpdater.stop();
+        }
+        if (this.scheduleUpdater) {
+            this.scheduleUpdater.stop();
+        }
+        if (this.socialUpdater) {
+            this.socialUpdater.stop();
+        }
         clearInterval(this.madokaTimer);
         clearInterval(this.slideSwitchTimer);
     }
 
     public getDeck = (): Deck => {
         const {data} = this.state;
-        if (!data.hasOwnProperty('decks')) {
+        if (!data.decks) {
             // Data has not been loaded yet
             return [];
         }
@@ -157,7 +163,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
 
     public addNewDeck = (newDeckName: string) => {
         const {data} = this.state;
-        if (!newDeckName || newDeckName.length <= 0 || data.decks.hasOwnProperty(newDeckName)) {
+        if (!newDeckName || newDeckName.length <= 0 || data.decks[newDeckName]) {
             alert('Pakalta puuttuu nimi tai se on jo olemassa.');
             return;
         }
@@ -190,7 +196,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             ({id, data, datums}) => {
                 if (
                     !this.state.data ||
-                    !this.state.data.hasOwnProperty('decks') ||
+                    !this.state.data.decks ||
                     this.state.id !== id
                 ) {
                     console.log('new decks', data);
@@ -220,7 +226,10 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
 
     private madokaTick = () => {
         const shouldMadoka = new Date().getHours() < 1 && Math.random() < 0.1;
-        document.getElementById('content')!.classList.toggle('madoka', shouldMadoka);
+        const contentElement = document.getElementById('content');
+        if (contentElement) {
+            contentElement.classList.toggle('madoka', shouldMadoka);
+        }
     };
 
     public enableEditing() {

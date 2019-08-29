@@ -4,8 +4,8 @@ import EditorComponent from '../EditorComponent';
 
 export interface SlideModule<SlideType extends Slide = Slide> {
     id: string;
-    view: React.ComponentClass<ViewProps<SlideType>> | React.SFC<ViewProps<SlideType>>;
-    editor?: React.ComponentClass<EditorProps<SlideType>> | React.SFC<EditorProps<SlideType>>;
+    view: React.ComponentClass<ViewProps<SlideType>> | React.FC<ViewProps<SlideType>>;
+    editor?: React.ComponentClass<EditorProps<SlideType>> | React.FC<EditorProps<SlideType>>;
 }
 
 

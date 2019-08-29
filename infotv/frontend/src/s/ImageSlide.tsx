@@ -7,7 +7,7 @@ interface ImageSlide extends Slide {
     src: string;
 }
 
-const ImageSlideView: React.SFC<ViewProps<ImageSlide>> = (props) => {
+const ImageSlideView: React.FC<ViewProps<ImageSlide>> = (props) => {
     const {slide} = props;
     const url = slide.src;
     const style: CSSProperties = {};
@@ -41,4 +41,4 @@ const module: SlideModule<ImageSlide> = {
     view: ImageSlideView,
     editor: ImageSlideEditor,
 };
-
+export default module;
