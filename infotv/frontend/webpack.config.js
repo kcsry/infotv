@@ -4,11 +4,10 @@ const autoprefixer = require("autoprefixer");
 const CURRENT_STYLE = process.env.INFOTV_STYLE || "desucon";
 const outputFsPath = process.env.OUTPUT_PATH || `${__dirname}/../static/infotv`;
 const outputPublicPath = process.env.PUBLIC_PATH || "/static/infotv";
-const production = process.argv.indexOf("-p") !== -1;
 
-const config = {
+module.exports = (env, argv) => ({
     context: __dirname,
-    entry: ["whatwg-fetch", "./src/main.jsx"],
+    entry: ["./src/main.tsx"],
     bail: true,
     devtool: "source-map",
     output: {
@@ -17,35 +16,41 @@ const config = {
         publicPath: outputPublicPath,
     },
     module: {
-        loaders: [
+        rules: [
             {
-                test: /\.jsx?$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: "babel",
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: "awesome-typescript-loader",
+                        options: {
+                            silent: argv.json,
+                        },
+                    },
+                ],
             },
             {
-                test: /\.(woff|woff2|svg|otf|ttf|eot|png|json)(\?.*)?$/,
-                loader: "url",
+                test: /\.(woff|woff2|svg|otf|ttf|eot|png)(\?.*)?$/,
+                use: [
+                    {
+                        loader: "url-loader",
+                    },
+                ],
             },
         ],
     },
     resolve: {
+        extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
+        symlinks: false,  // SPEED BOOST
         alias: {
             "current-style": `../styles/${CURRENT_STYLE}/less/style.less`,
         },
     },
-    plugins: [new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|fi/)],
-    postcss: [autoprefixer({ browsers: ["last 2 versions"] })],
-};
-
-if (production) {
-    config.plugins.push(
+    plugins: [
         new webpack.DefinePlugin({
             "process.env": {
-                NODE_ENV: JSON.stringify("production"),
+                NODE_ENV: JSON.stringify(argv.mode === "production" ? "production" : "development"),
             },
-        })
-    );
-}
-
-module.exports = config;
+        }),
+    ],
+});
