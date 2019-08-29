@@ -13,7 +13,7 @@ interface AnimeInfos {
     next?: AnimeInfo;
 }
 
-const AnimePart = ({title, anime, className}: { title: string, anime: AnimeInfo, className: string }) => {
+const AnimePart = ({title, anime, className}: { title: string; anime: AnimeInfo; className: string }) => {
     return (
         <div className={className}>
             <div className="header">{title}</div>
@@ -24,7 +24,7 @@ const AnimePart = ({title, anime, className}: { title: string, anime: AnimeInfo,
     );
 };
 
-const AnimeSlide: React.SFC<ViewProps> = () => {
+const AnimeSlide: React.FC<ViewProps> = () => {
     const anime = datumManager.getValue<AnimeInfos>('anime', {
         now: {name: '', image: '', text: ''},
         next: {name: '', image: '', text: ''},

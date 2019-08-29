@@ -14,7 +14,7 @@ interface TextSlideEditorProps extends EditorProps<TextSlide> {
 }
 
 
-const TextSlideView: React.SFC<TextSlideViewProps> = ({slide}) => {
+const TextSlideView: React.FC<TextSlideViewProps> = ({slide}) => {
     // clock-placeholder is a kludge to fix text wrapping around floated clock-element.
     return (
         <div className="slide text-slide">

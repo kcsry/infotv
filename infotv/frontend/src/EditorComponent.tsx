@@ -19,10 +19,10 @@ export default class EditorComponent extends React.Component<EditorComponentProp
 
     public getSlideEditor(currentSlide) {
         const slideModule = slideModules[currentSlide.type];
-        let editorComponent: React.ReactElement<any> = (<div>No editor for ${currentSlide.type}</div>);
-        if (slideModule) {
+        let editorComponent: React.ReactChild = (<div>No editor for ${currentSlide.type}</div>);
+        if (slideModule && slideModule.editor) {
             editorComponent = React.createElement(
-                slideModule.editor!,
+                slideModule.editor,
                 {
                     slide: currentSlide,
                     editor: this,
@@ -78,7 +78,9 @@ export default class EditorComponent extends React.Component<EditorComponentProp
     };
 
     private slideTypeChanged = event => {
-        this.props.currentSlide!.type = event.target.value;
+        if(this.props.currentSlide) {
+            this.props.currentSlide.type = event.target.value;
+        }
         this.props.tv.forceUpdate();
     };
 
@@ -100,18 +102,24 @@ export default class EditorComponent extends React.Component<EditorComponentProp
     }
 
     private moveSlideUp = () => {
-        this.moveSlide(this.props.currentSlide, -1);
-        this.props.tv.viewSlideById(this.props.currentSlide!.id);
+        if(this.props.currentSlide) {
+            this.moveSlide(this.props.currentSlide, -1);
+            this.props.tv.viewSlideById(this.props.currentSlide.id);
+        }
     };
 
     private moveSlideDown = () => {
-        this.moveSlide(this.props.currentSlide, +1);
-        this.props.tv.viewSlideById(this.props.currentSlide!.id);
+        if(this.props.currentSlide) {
+            this.moveSlide(this.props.currentSlide, +1);
+            this.props.tv.viewSlideById(this.props.currentSlide.id);
+        }
     };
 
     private slideDurationChanged = event => {
-        this.props.currentSlide!.duration = parseInt(event.target.value, 10);
-        this.props.tv.forceUpdate();
+        if(this.props.currentSlide) {
+            this.props.currentSlide.duration = parseInt(event.target.value, 10);
+            this.props.tv.forceUpdate();
+        }
     };
 
     private confirmAndPublish = () => {
@@ -141,10 +149,12 @@ export default class EditorComponent extends React.Component<EditorComponentProp
 
     private addNewDeck = () => {
         // TODO: Ahaha, this is shitty and non-Reactful :D
-        const newDeckInput = this.newDeckInputRef.current!;
-        const newDeckName = newDeckInput.value.trim().toLowerCase();
-        this.props.tv.addNewDeck(newDeckName);
-        newDeckInput.value = '';
+        const newDeckInput = this.newDeckInputRef.current;
+        if(newDeckInput) {
+            const newDeckName = newDeckInput.value.trim().toLowerCase();
+            this.props.tv.addNewDeck(newDeckName);
+            newDeckInput.value = '';
+        }
     };
 
     private deleteDeck = () => {
@@ -152,7 +162,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
     };
 
     public render() {
-        if (!this.props.data || !this.props.data.hasOwnProperty('decks')) {
+        if (!(this.props.data && this.props.data.decks)) {
             return <div>Missing decks :(</div>;
         }
         const deckOptions = Object.keys(this.props.data.decks).map((name) => (

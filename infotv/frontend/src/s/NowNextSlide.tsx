@@ -78,9 +78,9 @@ function renderSingleLoc(loc: string, currentProg?: Program, nextProg?: Program)
     );
 }
 
-const NowNextSlideView: React.SFC<ViewProps> = ({config}) => {
+const NowNextSlideView: React.FC<ViewProps> = ({config}) => {
     const onlyLoc = config.loc;
-    const content: Array<React.ReactElement<any>> = [];
+    const content: Array<React.ReactChild> = [];
     let onlyLocContent;
     const schedule = datumManager.getValue<Schedule>('schedule');
     if (!schedule) {
