@@ -51,5 +51,10 @@
         "semi": true,
         "trailingComma": "es5",
         "arrowParens": "always"
-    }
+    },
+    "browserslist": [
+        ">0.25%",
+        "not ie 11",
+        "not op_mini all"
+    ]
 }
