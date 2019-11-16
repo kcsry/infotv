@@ -1,4 +1,3 @@
-# -- encoding: UTF-8 --
 from django.utils.encoding import force_text
 
 from infotv.views import InfoTvView

@@ -1,7 +1,8 @@
-# -- encoding: UTF-8 --
-import requests
 import time
+
+import requests
 from django.core.management.base import BaseCommand
+
 from infotv.models import Datum
 
 

@@ -1,12 +1,11 @@
-# -- encoding: UTF-8 --
 import json
 
+import pytest
 from django.test.client import RequestFactory
 from django.test.utils import override_settings
 from django.utils.encoding import force_text
 
 from infotv.views import InfoTvView
-import pytest
 
 EXAMPLE_DECK_DATA = {
     "decks": {
