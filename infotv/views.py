@@ -13,7 +13,7 @@ from .models import Datum, SlideDeck
 from .policy import get_policy
 
 
-TEMPLATE = u"""
+TEMPLATE = """
 <!doctype html>
 <html lang="en">
 <head>
