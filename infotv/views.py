@@ -110,10 +110,10 @@ class InfoTvView(View):
         return JsonResponse({
             "id": deck_id,
             "data": data,
-            "datums": dict(
-                (d.key, d.serialize())
+            "datums": {
+                d.key: d.serialize()
                 for d in Datum.objects.filter(datum_q)
-            )
+            }
         })
 
     def handle_post_deck(self):
