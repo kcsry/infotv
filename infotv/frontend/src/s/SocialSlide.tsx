@@ -1,5 +1,6 @@
 import React, {CSSProperties} from 'react';
 import formatDate from 'date-fns/esm/format';
+import parseISO from 'date-fns/esm/parseISO';
 import cx from 'classnames';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
@@ -21,7 +22,7 @@ const renderSocialElement = (element) => {
         animationDuration: `${duration}s`,
     };
     const author = `@${element.author_name.replace(/^@/, '')}`;
-    const time = formatDate(element.posted_on, 'HH:mm');
+    const time = formatDate(parseISO(element.posted_on), 'HH:mm');
     const mediumIcon = mediumIcons[element.medium];
     return (
         <div style={style} className={cn} key={element.id}>
