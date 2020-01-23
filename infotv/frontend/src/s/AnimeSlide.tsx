@@ -18,7 +18,7 @@ const AnimePart = ({title, anime, className}: { title: string; anime: AnimeInfo;
         <div className={className}>
             <div className="header">{title}</div>
             <div className="name">{anime.name}</div>
-            <img src={anime.image} alt=""/>
+            <img src={anime.image} alt="" className={anime.name.length > 50 ? "small" : ""} />
             <div className="text">{anime.text}</div>
         </div>
     );
