@@ -6,7 +6,7 @@ class EventSlugField(models.CharField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("db_index", True)
         kwargs.setdefault("max_length", 64)
-        super(EventSlugField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class SlideDeck(models.Model):
