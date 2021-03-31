@@ -57,7 +57,7 @@
         "printWidth": 100,
         "tabWidth": 4,
         "semi": true,
-        "trailingComma": "always",
+        "trailingComma": "all",
         "arrowParens": "always"
     },
     "browserslist": [
