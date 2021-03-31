@@ -12,7 +12,7 @@ interface SlidesComponentProps {
     currentSlide: Slide;
 }
 
-export default class SlidesComponent extends React.Component<SlidesComponentProps, {}> {
+export default class SlidesComponent extends React.Component<SlidesComponentProps> {
     public getSlideComponent(slideData) {
         if (!slideData) {
             return <div/>;

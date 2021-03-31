@@ -17,4 +17,7 @@ const options: Config = {
     ...(QS.parse(window.location.search) as unknown as Partial<Config>),
 };
 
-window.TV = ReactDOM.render(<TVApp config={options}/>, document.getElementById('tv'));
+const setTVRef = (component) => {
+    window.TV = component;
+};
+ReactDOM.render(<TVApp config={options} ref={setTVRef}/>, document.getElementById('tv'));

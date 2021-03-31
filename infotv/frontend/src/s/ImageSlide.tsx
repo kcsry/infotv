@@ -17,7 +17,7 @@ const ImageSlideView: React.FC<ViewProps<ImageSlide>> = (props) => {
     return <div className="slide image-slide" style={style}/>;
 };
 
-class ImageSlideEditor extends React.Component<EditorProps<ImageSlide>, {}> {
+class ImageSlideEditor extends React.Component<EditorProps<ImageSlide>> {
     private setSrc = (event) => {
         this.props.slide.src = event.target.value;
         this.props.tv.forceUpdate();

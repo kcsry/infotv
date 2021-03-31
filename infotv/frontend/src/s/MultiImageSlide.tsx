@@ -97,7 +97,7 @@ class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, Mu
     }
 }
 
-class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>, {}> {
+class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>> {
     private setConfig = (event: ChangeEvent<HTMLTextAreaElement>) => {
         this.props.slide.config = event.target.value;
         this.props.tv.forceUpdate();

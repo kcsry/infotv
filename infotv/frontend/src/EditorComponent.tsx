@@ -13,7 +13,7 @@ interface EditorComponentProps {
     currentSlide?: Slide;
 }
 
-export default class EditorComponent extends React.Component<EditorComponentProps, {}> {
+export default class EditorComponent extends React.Component<EditorComponentProps> {
     private newDeckInputRef: React.RefObject<HTMLInputElement> = React.createRef();
 
 

@@ -32,7 +32,7 @@ function renderWeather(weather) {
     );
 }
 
-export default class OverlayComponent extends React.Component<{}, {}> {
+export default class OverlayComponent extends React.Component {
     private clockUpdateTimer?: number;
 
     public UNSAFE_componentWillMount() {

@@ -7,11 +7,9 @@ export interface TextSlide extends Slide {
     content?: string;
 }
 
-interface TextSlideViewProps extends ViewProps<TextSlide> {
-}
+type TextSlideViewProps = ViewProps<TextSlide>
 
-interface TextSlideEditorProps extends EditorProps<TextSlide> {
-}
+type TextSlideEditorProps = EditorProps<TextSlide>
 
 
 const TextSlideView: React.FC<TextSlideViewProps> = ({slide}) => {
@@ -24,7 +22,7 @@ const TextSlideView: React.FC<TextSlideViewProps> = ({slide}) => {
     );
 };
 
-class TextSlideEditor extends React.Component<TextSlideEditorProps, {}> {
+class TextSlideEditor extends React.Component<TextSlideEditorProps> {
 
     private setContent = (event: ChangeEvent<HTMLTextAreaElement>) => {
         this.props.slide.content = event.target.value;
