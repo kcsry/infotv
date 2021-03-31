@@ -3,7 +3,7 @@ import uuid
 
 import pytest
 from django.test.utils import override_settings
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from infotv.models import Datum
 from infotv.views import InfoTvView
@@ -15,13 +15,13 @@ def test_create_and_retrieve_unparsed_datum(rf):
         request=rf.post("/", {"datum": "hello", "value": "world"}),
         event="dsfargeg"
     )
-    assert not json.loads(force_text(response.content))["parsed"]
+    assert not json.loads(force_str(response.content))["parsed"]
     assert Datum.objects.get(event_slug="dsfargeg", key="hello").value == "world"
     response = InfoTvView.as_view()(
         event="dsfargeg",
         request=rf.get("/", {"action": "get_deck"})
     )
-    assert json.loads(force_text(response.content))["datums"]["hello"]["value"] == "world"
+    assert json.loads(force_str(response.content))["datums"]["hello"]["value"] == "world"
 
 
 @pytest.mark.django_db
@@ -32,13 +32,13 @@ def test_create_and_retrieve_parsed_datum(rf):
         request=rf.post("/", {"datum": "hello", "value": input_json}),
         event="dsfargeg"
     )
-    assert json.loads(force_text(response.content))["parsed"]
+    assert json.loads(force_str(response.content))["parsed"]
     assert Datum.objects.get(event_slug="dsfargeg", key="hello").value == input_data
     response = InfoTvView.as_view()(
         event="dsfargeg",
         request=rf.get("/", {"action": "get_deck"})
     )
-    assert json.loads(force_text(response.content))["datums"]["hello"]["value"] == input_data
+    assert json.loads(force_str(response.content))["datums"]["hello"]["value"] == input_data
 
 
 @pytest.mark.django_db

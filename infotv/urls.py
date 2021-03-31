@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
 from .views import InfoTvView
 
 urlpatterns = [
-    url(r'^(?P<event>[a-z0-9]+)/infotv/$', csrf_exempt(InfoTvView.as_view())),
+    path(r'<event>/infotv/', csrf_exempt(InfoTvView.as_view())),
 ]

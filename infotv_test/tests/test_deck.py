@@ -3,7 +3,7 @@ import json
 import pytest
 from django.test.client import RequestFactory
 from django.test.utils import override_settings
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from infotv.views import InfoTvView
 
@@ -53,11 +53,11 @@ def test_post_deck(rf, settings):
     for x in range(3):
         response = InfoTvView.as_view()(request=request, event="dsfargeg")
         assert response.status_code == 200
-        deck_id = json.loads(force_text(response.content))["id"]
+        deck_id = json.loads(force_str(response.content))["id"]
         assert deck_id > last_deck_id
         last_deck_id = deck_id
     response = InfoTvView.as_view()(request=rf.get("/", {"action": "get_deck"}), event="dsfargeg")
-    deck_data = json.loads(force_text(response.content))
+    deck_data = json.loads(force_str(response.content))
     assert deck_data["id"] == last_deck_id
     assert deck_data["data"] == EXAMPLE_DECK_DATA
 
@@ -65,7 +65,7 @@ def test_post_deck(rf, settings):
 @pytest.mark.django_db
 def test_get_bogus_event_deck(rf):
     response = InfoTvView.as_view()(request=rf.get("/", {"action": "get_deck"}), event="dkfjstwr4iunm")
-    assert json.loads(force_text(response.content))["id"] == "missing"
+    assert json.loads(force_str(response.content))["id"] == "missing"
 
 
 @pytest.mark.django_db
