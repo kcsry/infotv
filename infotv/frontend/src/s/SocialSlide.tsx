@@ -44,7 +44,7 @@ class SocialSlideView extends React.Component<ViewProps, SocialSlideState> {
         frame: 0,
     };
 
-    public componentWillMount() {
+    public UNSAFE_componentWillMount() {
         this.setState({timer: window.setInterval(this.tick, 600)});
     }
 

@@ -35,7 +35,7 @@ function renderWeather(weather) {
 export default class OverlayComponent extends React.Component<{}, {}> {
     private clockUpdateTimer?: number;
 
-    public componentWillMount() {
+    public UNSAFE_componentWillMount() {
         this.clockUpdateTimer = window.setInterval(() => {
             this.forceUpdate();
         }, 5000);

@@ -50,7 +50,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         };
     }
 
-    public componentWillMount() {
+    public UNSAFE_componentWillMount() {
         const {config} = this.props;
         this.deckUpdater = new Stagger({
             min: 50 * 1000,
