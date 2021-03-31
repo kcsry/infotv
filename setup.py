@@ -15,7 +15,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        "Django>=1.8",
+        "Django>=2.2",
         "jsonfield>=1.0.3",
         "requests>=2.13.0",
     ],
