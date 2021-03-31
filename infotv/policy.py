@@ -1,4 +1,3 @@
-# coding=utf-8
 from django.conf import settings
 from django.utils.module_loading import import_string
 
@@ -17,7 +16,7 @@ def get_event_slug_attr():
     return getattr(settings, "INFOTV_EVENT_SLUG_ATTR", "slug")
 
 
-class BasePolicy(object):
+class BasePolicy:
     def get_event_slug(self, request, slug):
         return "event"
 

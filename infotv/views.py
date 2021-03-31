@@ -1,4 +1,3 @@
-# coding=utf-8
 import json
 
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -42,10 +41,10 @@ class InfoTvView(View):
 
     def dispatch(self, request, *args, **kwargs):
         action = (request.POST.get("action") or request.GET.get("action"))
-        action = getattr(self, "handle_%s" % action, None)
+        action = getattr(self, f"handle_{action}", None)
         if action and callable(action):
             return action()
-        return super(InfoTvView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     # noinspection PyUnusedLocal
     def get(self, request, *args, **kwargs):
