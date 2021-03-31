@@ -4,7 +4,7 @@ import formatDate from 'date-fns/esm/format';
 import isFinite from 'lodash/isFinite';
 import DatumManager from './DatumManager';
 
-function renderWeather(weather) {
+function renderWeather(weather: any) {
     if (!weather) {
         return null;
     }

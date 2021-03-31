@@ -7,12 +7,14 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import datumManager from '../DatumManager';
 import {ViewProps} from './types';
 
-const mediumIcons = {
+const mediumIcons: Record<string, string> = {
     ig: 'fa fa-instagram',
     tw: 'fa fa-twitter',
 };
 
-const renderSocialElement = (element) => {
+type SocialElement = Record<string, any>; // TODO: fix me
+
+const renderSocialElement = (element: SocialElement) => {
     const cn = `${cx({item: true, 'has-img': !!element.primary_image_url})} ${element.medium}`;
     const rand = parseInt(element.id.replace(/[^0-9]/g, ''), 10);
     const randf = (rand % 5000) / 5000;

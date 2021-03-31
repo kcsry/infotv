@@ -13,7 +13,7 @@ interface SlidesComponentProps {
 }
 
 export default class SlidesComponent extends React.Component<SlidesComponentProps> {
-    public getSlideComponent(slideData) {
+    public getSlideComponent(slideData: Slide) {
         if (!slideData) {
             return <div/>;
         }

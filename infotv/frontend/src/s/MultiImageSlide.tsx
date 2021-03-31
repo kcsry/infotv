@@ -42,7 +42,7 @@ interface MultiImageSlideViewState {
 }
 
 class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, MultiImageSlideViewState> {
-    constructor(props) {
+    constructor(props: ViewProps<MultiImageSlide>) {
         super(props);
         this.state = {
             imageIndex: 0,

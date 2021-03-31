@@ -88,7 +88,7 @@ const NowNextSlideView: React.FC<ViewProps> = ({config}) => {
     }
     const nowTs = +new Date() / 1000;
     const order = schedule.location_order || [];
-    order.forEach((loc) => {
+    order.forEach((loc: string) => {
         if (onlyLoc && onlyLoc !== loc) {
             return;
         }
