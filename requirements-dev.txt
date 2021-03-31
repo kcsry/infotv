@@ -12,6 +12,8 @@ coverage==5.5
     # via pytest-cov
 iniconfig==1.1.1
     # via pytest
+isort==5.8.0
+    # via -r requirements-dev.in
 packaging==20.9
     # via pytest
 pep517==0.10.0

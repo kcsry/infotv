@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-
-
-from django.db import models, migrations
 import jsonfield.fields
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -33,6 +30,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='datum',
-            unique_together=set([('event_slug', 'key')]),
+            unique_together={('event_slug', 'key')},
         ),
     ]
