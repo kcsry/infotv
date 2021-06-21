@@ -4,7 +4,7 @@ export interface Config {
     only?: string;
     slow: boolean;
     event: string;
-    loc?: string;  // for only=nownext
+    loc?: string; // for only=nownext
 }
 
 export interface Slide {
@@ -16,6 +16,6 @@ export interface Slide {
 export type Deck = Slide[];
 
 export interface TVData {
-    eep?: any;  // TODO: Type me
-    decks: {[deckName: string]: Deck};
+    eep?: any; // TODO: Type me
+    decks: { [deckName: string]: Deck };
 }

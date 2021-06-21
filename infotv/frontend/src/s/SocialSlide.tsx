@@ -1,35 +1,37 @@
-import React, {CSSProperties} from 'react';
-import formatDate from 'date-fns/esm/format';
-import parseISO from 'date-fns/esm/parseISO';
-import cx from 'classnames';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import React, { CSSProperties } from "react";
+import formatDate from "date-fns/esm/format";
+import parseISO from "date-fns/esm/parseISO";
+import cx from "classnames";
+import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 
-import datumManager from '../DatumManager';
-import {ViewProps} from './types';
+import datumManager from "../DatumManager";
+import { ViewProps } from "./types";
 
 const mediumIcons: Record<string, string> = {
-    ig: 'fa fa-instagram',
-    tw: 'fa fa-twitter',
+    ig: "fa fa-instagram",
+    tw: "fa fa-twitter",
 };
 
 type SocialElement = Record<string, any>; // TODO: fix me
 
 const renderSocialElement = (element: SocialElement) => {
-    const cn = `${cx({item: true, 'has-img': !!element.primary_image_url})} ${element.medium}`;
-    const rand = parseInt(element.id.replace(/[^0-9]/g, ''), 10);
+    const cn = `${cx({ item: true, "has-img": !!element.primary_image_url })} ${element.medium}`;
+    const rand = parseInt(element.id.replace(/[^0-9]/g, ""), 10);
     const randf = (rand % 5000) / 5000;
     const duration = 0.6 + randf * 0.6;
     const style: CSSProperties = {
-        backgroundImage: element.primary_image_url ? `url(${element.primary_image_url})` : undefined,
+        backgroundImage: element.primary_image_url
+            ? `url(${element.primary_image_url})`
+            : undefined,
         animationDuration: `${duration}s`,
     };
-    const author = `@${element.author_name.replace(/^@/, '')}`;
-    const time = formatDate(parseISO(element.posted_on), 'HH:mm');
+    const author = `@${element.author_name.replace(/^@/, "")}`;
+    const time = formatDate(parseISO(element.posted_on), "HH:mm");
     const mediumIcon = mediumIcons[element.medium];
     return (
         <div style={style} className={cn} key={element.id}>
             <div className="meta">
-                <i className={mediumIcon}/> {author} @ {time}
+                <i className={mediumIcon} /> {author} @ {time}
             </div>
             <div className="body">{element.message}</div>
         </div>
@@ -47,7 +49,7 @@ class SocialSlideView extends React.Component<ViewProps, SocialSlideState> {
     };
 
     public UNSAFE_componentWillMount() {
-        this.setState({timer: window.setInterval(this.tick, 600)});
+        this.setState({ timer: window.setInterval(this.tick, 600) });
     }
 
     public componentWillUnmount() {
@@ -55,11 +57,11 @@ class SocialSlideView extends React.Component<ViewProps, SocialSlideState> {
     }
 
     private tick = () => {
-        this.setState({frame: this.state.frame + 1});
+        this.setState({ frame: this.state.frame + 1 });
     };
 
     public render() {
-        const items = datumManager.getValue('social') || [];
+        const items = datumManager.getValue("social") || [];
         const limit = Math.min(this.state.frame, items.length);
         const childElements = items.slice(0, limit).map(renderSocialElement);
         return (
@@ -77,7 +79,7 @@ class SocialSlideView extends React.Component<ViewProps, SocialSlideState> {
 }
 
 const module = {
-    id: 'social',
+    id: "social",
     view: SocialSlideView,
 };
 

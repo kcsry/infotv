@@ -1,8 +1,8 @@
-import React from 'react';
-import formatDate from 'date-fns/esm/format';
+import React from "react";
+import formatDate from "date-fns/esm/format";
 
-import isFinite from 'lodash/isFinite';
-import DatumManager from './DatumManager';
+import isFinite from "lodash/isFinite";
+import DatumManager from "./DatumManager";
 
 function renderWeather(weather: any) {
     if (!weather) {
@@ -17,13 +17,14 @@ function renderWeather(weather: any) {
     }
     try {
         icon = weather.weather[0].icon;
-        icon = <img src={`http://openweathermap.org/img/w/${icon}.png`} alt="weather icon"/>;
+        icon = <img src={`http://openweathermap.org/img/w/${icon}.png`} alt="weather icon" />;
     } catch (problem) {
         icon = null;
     }
-    const temperatureString = temperature && isFinite(temperature)
-        ? `${temperature.toLocaleString('fi', {maximumFractionDigits: 1})}°C`
-        : '';
+    const temperatureString =
+        temperature && isFinite(temperature)
+            ? `${temperature.toLocaleString("fi", { maximumFractionDigits: 1 })}°C`
+            : "";
     return (
         <div className="weather">
             <span>{temperatureString}</span>
@@ -47,8 +48,8 @@ export default class OverlayComponent extends React.Component {
     }
 
     public render() {
-        const text = formatDate(new Date(), 'HH:mm');
-        const weather = renderWeather(DatumManager.getValue('weather'));
+        const text = formatDate(new Date(), "HH:mm");
+        const weather = renderWeather(DatumManager.getValue("weather"));
         return (
             <div id="quad">
                 <div className="clock">{text}</div>

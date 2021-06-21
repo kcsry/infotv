@@ -1,9 +1,8 @@
-import React from 'react';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import TVApp from './TVApp';
-import {Config, Slide} from './types';
-import slideModules from './s';
-
+import React from "react";
+import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
+import TVApp from "./TVApp";
+import { Config, Slide } from "./types";
+import slideModules from "./s";
 
 interface SlidesComponentProps {
     tv: TVApp;
@@ -15,7 +14,7 @@ interface SlidesComponentProps {
 export default class SlidesComponent extends React.Component<SlidesComponentProps> {
     public getSlideComponent(slideData: Slide) {
         if (!slideData) {
-            return <div/>;
+            return <div />;
         }
         const props = {
             slide: slideData,

@@ -1,18 +1,18 @@
-import React from 'react';
-import QS from 'query-string';
-import debounce from 'lodash/debounce';
-import findIndex from 'lodash/findIndex';
-import SlidesComponent from './SlidesComponent';
-import OverlayComponent from './OverlayComponent';
-import EditorComponent from './EditorComponent';
-import datumManager from './DatumManager';
-import Stagger from './Stagger';
-import fetchJSON from './fetchJSON';
-import {forceInt} from './utils';
-import { Config, Deck, Slide, TVData } from './types';
+import React from "react";
+import QS from "query-string";
+import debounce from "lodash/debounce";
+import findIndex from "lodash/findIndex";
+import SlidesComponent from "./SlidesComponent";
+import OverlayComponent from "./OverlayComponent";
+import EditorComponent from "./EditorComponent";
+import datumManager from "./DatumManager";
+import Stagger from "./Stagger";
+import fetchJSON from "./fetchJSON";
+import { forceInt } from "./utils";
+import { Config, Deck, Slide, TVData } from "./types";
 
 function checkTallness() {
-    document.body.classList.toggle('tall', window.innerWidth < window.innerHeight);
+    document.body.classList.toggle("tall", window.innerWidth < window.innerHeight);
 }
 
 interface TVAppState {
@@ -28,7 +28,6 @@ interface TVAppProps {
     config: Config;
 }
 
-
 export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     private deckUpdater?: Stagger;
     private scheduleUpdater?: Stagger;
@@ -39,10 +38,10 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
 
     constructor(props: TVAppProps) {
         super(props);
-        const {config} = props;
+        const { config } = props;
         this.state = {
-            data: {decks: {}},
-            currentDeckName: config.deck ? config.deck.toLowerCase() : 'default',
+            data: { decks: {} },
+            currentDeckName: config.deck ? config.deck.toLowerCase() : "default",
             id: -1,
             slideIndex: 0,
             ticksUntilNextSlide: 1,
@@ -51,7 +50,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     }
 
     public UNSAFE_componentWillMount() {
-        const {config} = this.props;
+        const { config } = this.props;
         this.deckUpdater = new Stagger({
             min: 50 * 1000,
             max: 70 * 1000,
@@ -75,9 +74,9 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         if (config.edit) {
             this.enableEditing();
         } else {
-            document.body.classList.add('show');
+            document.body.classList.add("show");
         }
-        window.addEventListener('resize', debounce(checkTallness, 200));
+        window.addEventListener("resize", debounce(checkTallness, 200));
         checkTallness();
     }
 
@@ -96,13 +95,13 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     }
 
     public getDeck = (): Deck => {
-        const {data} = this.state;
+        const { data } = this.state;
         if (!data.decks) {
             // Data has not been loaded yet
             return [];
         }
         // Fallback to default deck if preferred deck is not available
-        const requestedDeckName = this.state.currentDeckName || 'default';
+        const requestedDeckName = this.state.currentDeckName || "default";
         return data.decks[requestedDeckName] || [];
     };
 
@@ -111,7 +110,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             return false;
         }
         const ticks = this.state.ticksUntilNextSlide - 1;
-        this.setState({ticksUntilNextSlide: ticks});
+        this.setState({ ticksUntilNextSlide: ticks });
         if (ticks <= 0) {
             this.nextSlide();
         }
@@ -134,57 +133,57 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
                 break;
             }
         }
-        this.setState({slideIndex: newSlideIndex, ticksUntilNextSlide});
+        this.setState({ slideIndex: newSlideIndex, ticksUntilNextSlide });
     };
 
     public viewSlideById = (id: string) => {
         const index = findIndex(this.getDeck(), (s) => s.id === id);
         if (index > -1) {
-            this.setState({slideIndex: index});
-            console.log('Viewing slide:', index, 'id', id);
+            this.setState({ slideIndex: index });
+            console.log("Viewing slide:", index, "id", id);
         }
     };
 
     public addNewSlide = () => {
-        const slide = {type: 'text', duration: 1, id: `s${Date.now().toString(30)}`};
+        const slide = { type: "text", duration: 1, id: `s${Date.now().toString(30)}` };
         const deck = this.getDeck();
         deck.splice(this.state.slideIndex, 0, slide);
-        const {data} = this.state;
-        this.setState({data});
+        const { data } = this.state;
+        this.setState({ data });
         this.viewSlideById(slide.id);
     };
 
     public deleteCurrentSlide = () => {
         const deck = this.getDeck();
         deck.splice(this.state.slideIndex, 1);
-        const {data} = this.state;
-        this.setState({data, slideIndex: 0});
+        const { data } = this.state;
+        this.setState({ data, slideIndex: 0 });
     };
 
     public addNewDeck = (newDeckName: string) => {
-        const {data} = this.state;
+        const { data } = this.state;
         if (!newDeckName || newDeckName.length <= 0 || data.decks[newDeckName]) {
-            alert('Pakalta puuttuu nimi tai se on jo olemassa.');
+            alert("Pakalta puuttuu nimi tai se on jo olemassa.");
             return;
         }
         data.decks[newDeckName] = [];
-        this.setState({data, currentDeckName: newDeckName, slideIndex: 0}, () => {
+        this.setState({ data, currentDeckName: newDeckName, slideIndex: 0 }, () => {
             this.addNewSlide();
         });
     };
 
     public deleteCurrentDeck = () => {
-        if (this.state.currentDeckName === 'default') {
-            alert('Default-pakkaa ei voi poistaa.');
+        if (this.state.currentDeckName === "default") {
+            alert("Default-pakkaa ei voi poistaa.");
             return;
         }
-        const {data} = this.state;
+        const { data } = this.state;
         delete data.decks[this.state.currentDeckName];
-        this.setState({data});
+        this.setState({ data });
     };
 
     public changeDeck = (newDeckName: string) => {
-        this.setState({currentDeckName: newDeckName, slideIndex: 0});
+        this.setState({ currentDeckName: newDeckName, slideIndex: 0 });
     };
 
     private requestDeck = () => {
@@ -192,15 +191,11 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         if (this.state.edit) {
             return false;
         }
-        fetchJSON(`${location.pathname}?${QS.stringify({action: 'get_deck'})}`).then(
-            ({id, data, datums}) => {
-                if (
-                    !this.state.data ||
-                    !this.state.data.decks ||
-                    this.state.id !== id
-                ) {
-                    console.log('new decks', data);
-                    this.setState({data, id, slideIndex: -1});
+        fetchJSON(`${location.pathname}?${QS.stringify({ action: "get_deck" })}`).then(
+            ({ id, data, datums }) => {
+                if (!this.state.data || !this.state.data.decks || this.state.id !== id) {
+                    console.log("new decks", data);
+                    this.setState({ data, id, slideIndex: -1 });
                     this.nextSlide();
                 }
                 datumManager.update(datums || {});
@@ -210,39 +205,39 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     };
 
     private requestSchedule = () => {
-        const {config} = this.props;
-        fetchJSON(`/api/schedule/json2/?${QS.stringify({event: config.event})}`).then((data) => {
-            datumManager.setValue('schedule', data);
+        const { config } = this.props;
+        fetchJSON(`/api/schedule/json2/?${QS.stringify({ event: config.event })}`).then((data) => {
+            datumManager.setValue("schedule", data);
             this.forceUpdate();
         });
     };
 
     private requestSocial = () => {
-        fetchJSON('/api/social/').then((data) => {
-            datumManager.setValue('social', data);
+        fetchJSON("/api/social/").then((data) => {
+            datumManager.setValue("social", data);
             this.forceUpdate();
         });
     };
 
     private madokaTick = () => {
         const shouldMadoka = new Date().getHours() < 1 && Math.random() < 0.1;
-        const contentElement = document.getElementById('content');
+        const contentElement = document.getElementById("content");
         if (contentElement) {
-            contentElement.classList.toggle('madoka', shouldMadoka);
+            contentElement.classList.toggle("madoka", shouldMadoka);
         }
     };
 
     public enableEditing() {
-        this.setState({edit: true});
+        this.setState({ edit: true });
         return true;
     }
 
     public render() {
         let currentSlide: Slide | undefined;
-        const {config} = this.props;
+        const { config } = this.props;
         const deck = this.getDeck();
         if (config.only) {
-            currentSlide = {type: config.only, id: 'only', duration: Number.MAX_SAFE_INTEGER};
+            currentSlide = { type: config.only, id: "only", duration: Number.MAX_SAFE_INTEGER };
         } else if (deck) {
             currentSlide = deck[this.state.slideIndex];
         }
@@ -262,15 +257,15 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         return (
             <div>
                 <div id="content" key="content">
-                    <OverlayComponent/>
-                    {currentSlide ?
+                    <OverlayComponent />
+                    {currentSlide ? (
                         <SlidesComponent
                             tv={this}
                             config={this.props.config}
                             currentSlide={currentSlide}
                             animate={animate}
-                        /> : null
-                    }
+                        />
+                    ) : null}
                 </div>
                 {eep}
                 {editor}

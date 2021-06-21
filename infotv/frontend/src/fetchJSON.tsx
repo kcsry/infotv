@@ -6,26 +6,21 @@ function checkStatus(response: Response): Promise<any> {
     }
     const error = new Error(response.statusText);
     (error as any).response = response;
-    return (
-        response
-            .json()
-            .then((body) => {
-                (error as any).body = body;
-            })
-            .catch(() => {
-                // Catch body parsing errors and continue
-            })
-            .then(() => {
-                throw error;
-            })
-    );
+    return response
+        .json()
+        .then((body) => {
+            (error as any).body = body;
+        })
+        .catch(() => {
+            // Catch body parsing errors and continue
+        })
+        .then(() => {
+            throw error;
+        });
 }
 
-export default function fetchJSON(
-    url: string,
-    opts: Partial<RequestInit> = {},
-): Promise<any> {
-    return fetch(url, {credentials: 'same-origin', ...opts})
+export default function fetchJSON(url: string, opts: Partial<RequestInit> = {}): Promise<any> {
+    return fetch(url, { credentials: "same-origin", ...opts })
         .then(checkStatus)
         .then((response) => response.json());
 }

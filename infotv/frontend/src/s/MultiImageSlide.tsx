@@ -1,7 +1,7 @@
-import React, {ChangeEvent, CSSProperties} from 'react';
-import {forceInt, isImageURL} from '../utils';
-import {Slide} from '../types';
-import {EditorProps, SlideModule, ViewProps} from './types';
+import React, { ChangeEvent, CSSProperties } from "react";
+import { forceInt, isImageURL } from "../utils";
+import { Slide } from "../types";
+import { EditorProps, SlideModule, ViewProps } from "./types";
 
 interface ParsedImage {
     duration: number;
@@ -27,7 +27,10 @@ function parseImage(line: string): ParsedImage | undefined {
 }
 
 function parseImages(data: string): ParsedImage[] {
-    return `${data || ''}`.split('\n').map(parseImage).filter(v => v) as ParsedImage[];
+    return `${data || ""}`
+        .split("\n")
+        .map(parseImage)
+        .filter((v) => v) as ParsedImage[];
 }
 
 interface MultiImageSlide extends Slide {
@@ -41,7 +44,10 @@ interface MultiImageSlideViewState {
     images: ParsedImage[];
 }
 
-class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, MultiImageSlideViewState> {
+class MultiImageSlideView extends React.Component<
+    ViewProps<MultiImageSlide>,
+    MultiImageSlideViewState
+> {
     constructor(props: ViewProps<MultiImageSlide>) {
         super(props);
         this.state = {
@@ -66,7 +72,7 @@ class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, Mu
         if (!this.state.deadline) {
             const slide = this.state.images[this.state.imageIndex];
             deadline = slide ? now + slide.duration : -1;
-            this.setState({deadline});
+            this.setState({ deadline });
             return;
         }
         if (this.state.deadline > 0 && now >= this.state.deadline) {
@@ -78,7 +84,7 @@ class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, Mu
     };
 
     private reset = () => {
-        const state = {deadline: 0, imageIndex: 0};
+        const state = { deadline: 0, imageIndex: 0 };
         this.setState(state);
     };
 
@@ -93,7 +99,7 @@ class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, Mu
         if (image) {
             style.backgroundImage = `url(${image.url})`;
         }
-        return <div className="slide image-slide" style={style} onClick={this.reset}/>;
+        return <div className="slide image-slide" style={style} onClick={this.reset} />;
     }
 }
 
@@ -104,15 +110,15 @@ class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>
     };
 
     public render() {
-        const {slide} = this.props;
+        const { slide } = this.props;
         return (
             <div className="multi-image-slide-editor">
                 <textarea
-                    value={slide.config || ''}
+                    value={slide.config || ""}
                     onChange={this.setConfig}
                     placeholder="pituus (msek);HTTP-osoite ..."
                 />
-                <br/>
+                <br />
                 {parseImages(slide.config).length} kelvollista kuvaa
             </div>
         );
@@ -120,7 +126,7 @@ class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>
 }
 
 const module: SlideModule<MultiImageSlide> = {
-    id: 'multi-image',
+    id: "multi-image",
     view: MultiImageSlideView,
     editor: MultiImageSlideEditor,
 };
