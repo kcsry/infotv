@@ -1,20 +1,20 @@
-import React, {CSSProperties} from 'react';
-import {isImageURL} from '../utils';
-import {Slide} from '../types';
-import {EditorProps, SlideModule, ViewProps} from './types';
+import React, { CSSProperties } from "react";
+import { isImageURL } from "../utils";
+import { Slide } from "../types";
+import { EditorProps, SlideModule, ViewProps } from "./types";
 
 interface ImageSlide extends Slide {
     src: string;
 }
 
 const ImageSlideView: React.FC<ViewProps<ImageSlide>> = (props) => {
-    const {slide} = props;
+    const { slide } = props;
     const url = slide.src;
     const style: CSSProperties = {};
     if (isImageURL(url)) {
         style.backgroundImage = `url(${url})`;
     }
-    return <div className="slide image-slide" style={style}/>;
+    return <div className="slide image-slide" style={style} />;
 };
 
 class ImageSlideEditor extends React.Component<EditorProps<ImageSlide>> {
@@ -24,12 +24,12 @@ class ImageSlideEditor extends React.Component<EditorProps<ImageSlide>> {
     };
 
     public render() {
-        const {slide} = this.props;
+        const { slide } = this.props;
         return (
             <div className="image-slide-editor">
                 <label>
-                    Kuvan osoite:{' '}
-                    <input type="url" value={slide.src || ''} onChange={this.setSrc}/>
+                    Kuvan osoite:{" "}
+                    <input type="url" value={slide.src || ""} onChange={this.setSrc} />
                 </label>
             </div>
         );
@@ -37,7 +37,7 @@ class ImageSlideEditor extends React.Component<EditorProps<ImageSlide>> {
 }
 
 const module: SlideModule<ImageSlide> = {
-    id: 'image',
+    id: "image",
     view: ImageSlideView,
     editor: ImageSlideEditor,
 };

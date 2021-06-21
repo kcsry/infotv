@@ -1,6 +1,6 @@
-import {Config, Slide} from '../types';
-import TVApp from '../TVApp';
-import EditorComponent from '../EditorComponent';
+import { Config, Slide } from "../types";
+import TVApp from "../TVApp";
+import EditorComponent from "../EditorComponent";
 
 export interface SlideModule<SlideType extends Slide = Slide> {
     id: string;
@@ -8,13 +8,11 @@ export interface SlideModule<SlideType extends Slide = Slide> {
     editor?: React.ComponentClass<EditorProps<SlideType>> | React.FC<EditorProps<SlideType>>;
 }
 
-
 export interface ViewProps<SlideType extends Slide = Slide> {
     config: Config;
     slide: SlideType;
     tv: TVApp;
 }
-
 
 export interface EditorProps<SlideType extends Slide = Slide> {
     config: Config;

@@ -1,9 +1,9 @@
-import React from 'react';
-import fetchJSON from './fetchJSON';
-import slideModules from './s';
-import {Config, Slide, TVData} from './types';
-import TVApp from './TVApp';
-import {TextSlide} from './s/TextSlide';
+import React from "react";
+import fetchJSON from "./fetchJSON";
+import slideModules from "./s";
+import { Config, Slide, TVData } from "./types";
+import TVApp from "./TVApp";
+import { TextSlide } from "./s/TextSlide";
 
 interface EditorComponentProps {
     data: TVData;
@@ -16,20 +16,16 @@ interface EditorComponentProps {
 export default class EditorComponent extends React.Component<EditorComponentProps> {
     private newDeckInputRef: React.RefObject<HTMLInputElement> = React.createRef();
 
-
     public getSlideEditor(currentSlide: Slide) {
         const slideModule = slideModules[currentSlide.type];
-        let editorComponent: React.ReactChild = (<div>No editor for ${currentSlide.type}</div>);
+        let editorComponent: React.ReactChild = <div>No editor for ${currentSlide.type}</div>;
         if (slideModule && slideModule.editor) {
-            editorComponent = React.createElement(
-                slideModule.editor,
-                {
-                    slide: currentSlide,
-                    editor: this,
-                    config: this.props.config,
-                    tv: this.props.tv,
-                },
-            );
+            editorComponent = React.createElement(slideModule.editor, {
+                slide: currentSlide,
+                editor: this,
+                config: this.props.config,
+                tv: this.props.tv,
+            });
         }
         const slideTypeOptions = Object.keys(slideModules).map((t) => (
             <option key={t} value={t}>
@@ -78,7 +74,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
     };
 
     private slideTypeChanged = (event: any) => {
-        if(this.props.currentSlide) {
+        if (this.props.currentSlide) {
             this.props.currentSlide.type = event.target.value;
         }
         this.props.tv.forceUpdate();
@@ -102,21 +98,21 @@ export default class EditorComponent extends React.Component<EditorComponentProp
     }
 
     private moveSlideUp = () => {
-        if(this.props.currentSlide) {
+        if (this.props.currentSlide) {
             this.moveSlide(this.props.currentSlide, -1);
             this.props.tv.viewSlideById(this.props.currentSlide.id);
         }
     };
 
     private moveSlideDown = () => {
-        if(this.props.currentSlide) {
+        if (this.props.currentSlide) {
             this.moveSlide(this.props.currentSlide, +1);
             this.props.tv.viewSlideById(this.props.currentSlide.id);
         }
     };
 
     private slideDurationChanged = (event: any) => {
-        if(this.props.currentSlide) {
+        if (this.props.currentSlide) {
             this.props.currentSlide.duration = parseInt(event.target.value, 10);
             this.props.tv.forceUpdate();
         }
@@ -124,21 +120,21 @@ export default class EditorComponent extends React.Component<EditorComponentProp
 
     private confirmAndPublish = () => {
         if (this.props.data.decks.default.length <= 0) {
-            alert('Ei voi julkaista tyhjää Default-pakkaa');
+            alert("Ei voi julkaista tyhjää Default-pakkaa");
             return false;
         }
-        if (!confirm('Oletko varma että haluat julkaista nykyisen pakan?')) {
+        if (!confirm("Oletko varma että haluat julkaista nykyisen pakan?")) {
             return false;
         }
         const deckFormData = new FormData();
-        deckFormData.append('action', 'post_deck');
-        deckFormData.append('data', JSON.stringify(this.props.data));
-        fetchJSON(location.pathname, {method: 'POST', body: deckFormData})
+        deckFormData.append("action", "post_deck");
+        deckFormData.append("data", JSON.stringify(this.props.data));
+        fetchJSON(location.pathname, { method: "POST", body: deckFormData })
             .then((data) => {
-                alert(data.message || 'wut :(');
+                alert(data.message || "wut :(");
             })
             .catch((err) => {
-                alert((err.body && err.body.message) || 'it broke');
+                alert((err.body && err.body.message) || "it broke");
             });
         return true;
     };
@@ -150,10 +146,10 @@ export default class EditorComponent extends React.Component<EditorComponentProp
     private addNewDeck = () => {
         // TODO: Ahaha, this is shitty and non-Reactful :D
         const newDeckInput = this.newDeckInputRef.current;
-        if(newDeckInput) {
+        if (newDeckInput) {
             const newDeckName = newDeckInput.value.trim().toLowerCase();
             this.props.tv.addNewDeck(newDeckName);
-            newDeckInput.value = '';
+            newDeckInput.value = "";
         }
     };
 
@@ -173,8 +169,8 @@ export default class EditorComponent extends React.Component<EditorComponentProp
         const slides = this.props.tv.getDeck();
         const slideOptions = slides.map((s, i) => {
             let text = `Slide ${i + 1} (${s.type}) `;
-            if (s.type === 'text') {
-                let contentTrim = (s as TextSlide).content || '';
+            if (s.type === "text") {
+                let contentTrim = (s as TextSlide).content || "";
                 if (contentTrim.length > 15) {
                     contentTrim = `${contentTrim.substr(0, 15)}...`;
                 }
@@ -183,7 +179,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 text += `[${s.id}]`;
             }
             if (s.duration <= 0) {
-                text += ' (ei päällä)';
+                text += " (ei päällä)";
             }
             return (
                 <option key={s.id} value={s.id}>
@@ -191,8 +187,8 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 </option>
             );
         });
-        const {currentSlide} = this.props;
-        const slideEditor = (currentSlide ? this.getSlideEditor(currentSlide) : null);
+        const { currentSlide } = this.props;
+        const slideEditor = currentSlide ? this.getSlideEditor(currentSlide) : null;
         return (
             <div>
                 <div className="editor-toolbar toolbar">
@@ -201,7 +197,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 <div className="eep-editor toolbar">
                     <label htmlFor="eep-input">Erikoisviesti:&nbsp;</label>
                     <input
-                        value={this.props.data.eep || ''}
+                        value={this.props.data.eep || ""}
                         onChange={this.eepChanged}
                         id="eep-input"
                     />
@@ -209,7 +205,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 <div className="toolbar-header">Pakka</div>
                 <div className="deck-selector toolbar">
                     <select
-                        value={this.props.currentDeckName ? this.props.currentDeckName : ''}
+                        value={this.props.currentDeckName ? this.props.currentDeckName : ""}
                         onChange={this.deckChanged}
                         id="editor-select-deck"
                     >
@@ -218,11 +214,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 </div>
                 <div className="deck-creator toolbar">
                     <label>
-                        Nimi:{' '}
-                        <input
-                            ref={this.newDeckInputRef}
-                            id="new-deck-name"
-                        />
+                        Nimi: <input ref={this.newDeckInputRef} id="new-deck-name" />
                     </label>
                     <button onClick={this.addNewDeck}>Uusi pakka</button>
                     <button onClick={this.deleteDeck} disabled={!this.props.currentDeckName}>
@@ -232,7 +224,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 <div className="toolbar-header">Slide</div>
                 <div className="slide-selector toolbar">
                     <select
-                        value={currentSlide ? currentSlide.id : ''}
+                        value={currentSlide ? currentSlide.id : ""}
                         onChange={this.slideChanged}
                         id="editor-select-slide"
                     >

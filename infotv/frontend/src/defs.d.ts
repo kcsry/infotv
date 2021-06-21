@@ -1,5 +1,5 @@
-import TVApp from './TVApp';
-import {Config} from './types';
+import TVApp from "./TVApp";
+import { Config } from "./types";
 
 declare global {
     interface Window {

@@ -1,9 +1,9 @@
-import cx from 'classnames';
-import React from 'react';
-import formatDate from 'date-fns/esm/format';
+import cx from "classnames";
+import React from "react";
+import formatDate from "date-fns/esm/format";
 
-import datumManager from '../DatumManager';
-import {ViewProps} from './types';
+import datumManager from "../DatumManager";
+import { ViewProps } from "./types";
 
 interface ProgramTimes {
     startTime: string;
@@ -28,8 +28,8 @@ function getTimes(prog: Program): ProgramTimes {
     const endDate = new Date(prog.end_ts * 1000);
     const soon = Math.abs(prog.start_ts - prog.end_ts) < 5 * 60;
     return {
-        startTime: formatDate(startDate, 'HH:mm'),
-        endTime: formatDate(endDate, 'HH:mm'),
+        startTime: formatDate(startDate, "HH:mm"),
+        endTime: formatDate(endDate, "HH:mm"),
         className: cx({
             progInfo: true,
             soon,
@@ -63,26 +63,26 @@ function renderSingleLocFragment(title: string, times: ProgramTimes, prog: Progr
 
 function renderSingleLoc(loc: string, currentProg?: Program, nextProg?: Program) {
     const nowElems = currentProg
-        ? renderSingleLocFragment('Nyt', getTimes(currentProg), currentProg)
+        ? renderSingleLocFragment("Nyt", getTimes(currentProg), currentProg)
         : null;
     const nextElems = nextProg
-        ? renderSingleLocFragment('Seuraavaksi', getTimes(nextProg), nextProg)
+        ? renderSingleLocFragment("Seuraavaksi", getTimes(nextProg), nextProg)
         : null;
     return (
         <div className="slide nownext-single-slide">
             <div className="loc">{loc}</div>
             {nowElems}
-            {nowElems != null && nextElems != null ? <hr/> : null}
+            {nowElems != null && nextElems != null ? <hr /> : null}
             {nextElems}
         </div>
     );
 }
 
-const NowNextSlideView: React.FC<ViewProps> = ({config}) => {
+const NowNextSlideView: React.FC<ViewProps> = ({ config }) => {
     const onlyLoc = config.loc;
     const content: Array<React.ReactChild> = [];
     let onlyLocContent;
-    const schedule = datumManager.getValue<Schedule>('schedule');
+    const schedule = datumManager.getValue<Schedule>("schedule");
     if (!schedule) {
         return <div>No schedule</div>;
     }
@@ -132,6 +132,6 @@ const NowNextSlideView: React.FC<ViewProps> = ({config}) => {
 };
 
 export default {
-    id: 'nownext',
+    id: "nownext",
     view: NowNextSlideView,
 };
