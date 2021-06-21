@@ -7,8 +7,8 @@
         "build": "webpack --mode=production --progress",
         "watch": "webpack --mode=development --progress --watch",
         "release": "webpack --mode=production",
-        "lint": "eslint 'src/**/*.ts*'",
-        "prettify": "prettier --write '**/*.js*'",
+        "lint": "eslint src",
+        "prettify": "prettier --write src",
         "test": "true"
     },
     "author": "Aarni Koskela <akx@iki.fi>",
@@ -55,8 +55,7 @@
         "printWidth": 100,
         "tabWidth": 4,
         "semi": true,
-        "trailingComma": "all",
-        "arrowParens": "always"
+        "trailingComma": "all"
     },
     "browserslist": [
         ">0.25%",
