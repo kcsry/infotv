@@ -13,11 +13,11 @@ interface EditorComponentProps {
     currentSlide?: Slide;
 }
 
-export default class EditorComponent extends React.Component<EditorComponentProps, {}> {
+export default class EditorComponent extends React.Component<EditorComponentProps> {
     private newDeckInputRef: React.RefObject<HTMLInputElement> = React.createRef();
 
 
-    public getSlideEditor(currentSlide) {
+    public getSlideEditor(currentSlide: Slide) {
         const slideModule = slideModules[currentSlide.type];
         let editorComponent: React.ReactChild = (<div>No editor for ${currentSlide.type}</div>);
         if (slideModule && slideModule.editor) {
@@ -66,25 +66,25 @@ export default class EditorComponent extends React.Component<EditorComponentProp
         );
     }
 
-    private eepChanged = event => {
+    private eepChanged = (event: any) => {
         const eep = event.target.value;
         this.props.data.eep = eep && eep.length ? eep : null;
         this.props.tv.forceUpdate();
     };
 
-    private slideChanged = event => {
+    private slideChanged = (event: any) => {
         const id = event.target.value;
         this.props.tv.viewSlideById(id);
     };
 
-    private slideTypeChanged = event => {
+    private slideTypeChanged = (event: any) => {
         if(this.props.currentSlide) {
             this.props.currentSlide.type = event.target.value;
         }
         this.props.tv.forceUpdate();
     };
 
-    private moveSlide(slide, direction) {
+    private moveSlide(slide: Slide, direction: number) {
         const slides = this.props.tv.getDeck();
         const idx = slides.indexOf(slide);
         if (idx === -1) {
@@ -115,7 +115,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
         }
     };
 
-    private slideDurationChanged = event => {
+    private slideDurationChanged = (event: any) => {
         if(this.props.currentSlide) {
             this.props.currentSlide.duration = parseInt(event.target.value, 10);
             this.props.tv.forceUpdate();
@@ -143,7 +143,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
         return true;
     };
 
-    private deckChanged = event => {
+    private deckChanged = (event: any) => {
         this.props.tv.changeDeck(event.target.value);
     };
 

@@ -9,7 +9,7 @@ import datumManager from './DatumManager';
 import Stagger from './Stagger';
 import fetchJSON from './fetchJSON';
 import {forceInt} from './utils';
-import {Config, Deck, TVData} from './types';
+import { Config, Deck, Slide, TVData } from './types';
 
 function checkTallness() {
     document.body.classList.toggle('tall', window.innerWidth < window.innerHeight);
@@ -37,7 +37,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     private slideSwitchTimer?: number;
     private madokaTimer?: number;
 
-    constructor(props) {
+    constructor(props: TVAppProps) {
         super(props);
         const {config} = props;
         this.state = {
@@ -50,7 +50,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         };
     }
 
-    public componentWillMount() {
+    public UNSAFE_componentWillMount() {
         const {config} = this.props;
         this.deckUpdater = new Stagger({
             min: 50 * 1000,
@@ -120,7 +120,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
 
     private nextSlide = () => {
         let ticksUntilNextSlide = 1;
-        let newSlideIndex;
+        let newSlideIndex = this.state.slideIndex;
         const deck = this.getDeck();
         for (let offset = 1; offset < 30; offset++) {
             newSlideIndex = Math.max(0, this.state.slideIndex + offset) % deck.length;
@@ -238,11 +238,11 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     }
 
     public render() {
-        let currentSlide;
+        let currentSlide: Slide | undefined;
         const {config} = this.props;
         const deck = this.getDeck();
         if (config.only) {
-            currentSlide = {type: config.only, id: 'only'};
+            currentSlide = {type: config.only, id: 'only', duration: Number.MAX_SAFE_INTEGER};
         } else if (deck) {
             currentSlide = deck[this.state.slideIndex];
         }
@@ -263,12 +263,14 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             <div>
                 <div id="content" key="content">
                     <OverlayComponent/>
-                    <SlidesComponent
-                        tv={this}
-                        config={this.props.config}
-                        currentSlide={currentSlide}
-                        animate={animate}
-                    />
+                    {currentSlide ?
+                        <SlidesComponent
+                            tv={this}
+                            config={this.props.config}
+                            currentSlide={currentSlide}
+                            animate={animate}
+                        /> : null
+                    }
                 </div>
                 {eep}
                 {editor}

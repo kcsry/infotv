@@ -7,7 +7,7 @@ name: CI
     branches:
       - master
 jobs:
-  Build:
+  Python:
     runs-on: ubuntu-20.04
     env:
       DEBUG: '1'
@@ -33,3 +33,18 @@ jobs:
       - run: pip install tox-gh-actions -r requirements-dev.txt
       - run: tox
       - run: 'bash <(curl -s https://codecov.io/bash)'
+  JavaScript:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn
+        working-directory: ./infotv/frontend
+      - run: yarn lint
+        working-directory: ./infotv/frontend
+      - run: yarn build
+        working-directory: ./infotv/frontend
+      - run: yarn test
+        working-directory: ./infotv/frontend

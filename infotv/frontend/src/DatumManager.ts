@@ -4,28 +4,28 @@ interface Datum<T = any> {
     virtual?: boolean;
 }
 
-const datums = {};
+const datums: Record<string, Datum> = {};
 
 export class DatumManager {
-    public update(data) {
+    public update(data: Record<string, Datum>) {
         Object.assign(datums, data);
     }
 
     public setValue<T = any>(key: string, value: T): Datum<T> {
-        const datum: Datum<T> = {value, mtime: 0, virtual: true};
+        const datum: Datum<T> = { value, mtime: 0, virtual: true };
         datums[key] = datum;
         return datum;
     }
 
-    public getValue<T = any>(key, defaultValue?: T): any {
+    public getValue<T = any>(key: string, defaultValue?: T): T {
         const datum = datums[key];
         if (datum) {
             return datum.value as T;
         }
-        return defaultValue;
+        return defaultValue as T;
     }
 
-    public getFull<T = any>(key): Datum<T> | undefined {
+    public getFull<T = any>(key: string): Datum<T> | undefined {
         return datums[key] || undefined;
     }
 }

@@ -4,7 +4,7 @@ import formatDate from 'date-fns/esm/format';
 import isFinite from 'lodash/isFinite';
 import DatumManager from './DatumManager';
 
-function renderWeather(weather) {
+function renderWeather(weather: any) {
     if (!weather) {
         return null;
     }
@@ -32,10 +32,10 @@ function renderWeather(weather) {
     );
 }
 
-export default class OverlayComponent extends React.Component<{}, {}> {
+export default class OverlayComponent extends React.Component {
     private clockUpdateTimer?: number;
 
-    public componentWillMount() {
+    public UNSAFE_componentWillMount() {
         this.clockUpdateTimer = window.setInterval(() => {
             this.forceUpdate();
         }, 5000);

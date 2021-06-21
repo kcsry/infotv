@@ -36,7 +36,7 @@ const AnimeSlide: React.FC<ViewProps> = () => {
                 {anime.now.name && (
                     <AnimePart anime={anime.now} title="Nyt menossa" className="now"/>
                 )}
-                {anime.next.name && (
+                {anime.next?.name && (
                     <AnimePart anime={anime.next} title="Seuraavaksi vuorossa" className="next"/>
                 )}
             </div>

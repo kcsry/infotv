@@ -42,7 +42,7 @@ interface MultiImageSlideViewState {
 }
 
 class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, MultiImageSlideViewState> {
-    constructor(props) {
+    constructor(props: ViewProps<MultiImageSlide>) {
         super(props);
         this.state = {
             imageIndex: 0,
@@ -50,7 +50,7 @@ class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, Mu
         };
     }
 
-    public componentWillMount() {
+    public UNSAFE_componentWillMount() {
         this.setState({
             updateTimer: window.setInterval(this.tick, 100),
         });
@@ -97,7 +97,7 @@ class MultiImageSlideView extends React.Component<ViewProps<MultiImageSlide>, Mu
     }
 }
 
-class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>, {}> {
+class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>> {
     private setConfig = (event: ChangeEvent<HTMLTextAreaElement>) => {
         this.props.slide.config = event.target.value;
         this.props.tv.forceUpdate();

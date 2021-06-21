@@ -22,10 +22,7 @@ module.exports = (env, argv) => ({
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader: "awesome-typescript-loader",
-                        options: {
-                            silent: argv.json,
-                        },
+                        loader: "ts-loader",
                     },
                 ],
             },
@@ -45,6 +42,7 @@ module.exports = (env, argv) => ({
         alias: {
             "current-style": `../styles/${CURRENT_STYLE}/less/style.less`,
         },
+        fallback: { "path": false },
     },
     plugins: [
         new webpack.DefinePlugin({
