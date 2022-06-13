@@ -18,6 +18,16 @@ module.exports = (env, argv) => ({
     module: {
         rules: [
             {
+                test: /node_modules\/vfile\/core\.js/,
+                use: [{
+                    loader: 'imports-loader',
+                    options: {
+                        type: 'commonjs',
+                        imports: ['single process/browser process'],
+                    },
+                }],
+            },
+            {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: [
@@ -42,7 +52,7 @@ module.exports = (env, argv) => ({
         alias: {
             "current-style": `../styles/${CURRENT_STYLE}/less/style.less`,
         },
-        fallback: { "path": false },
+        fallback: {"path": false},
     },
     plugins: [
         new webpack.DefinePlugin({
