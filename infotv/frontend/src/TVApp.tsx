@@ -121,7 +121,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         let ticksUntilNextSlide = 1;
         let newSlideIndex = this.state.slideIndex;
         const deck = this.getDeck();
-        for (let offset = 1; offset < 30; offset++) {
+        for (let offset = 1; offset <= deck.length + 1; offset++) {
             newSlideIndex = Math.max(0, this.state.slideIndex + offset) % deck.length;
             const newSlide = deck[newSlideIndex];
             if (newSlide) {
