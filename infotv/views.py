@@ -16,6 +16,7 @@ TEMPLATE = """
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="43210" />
 </head>
 <body>
     <div id="tv"></div>
