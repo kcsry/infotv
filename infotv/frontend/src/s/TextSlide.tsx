@@ -1,5 +1,6 @@
 import React, { ChangeEvent } from "react";
 import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import { Slide } from "../types";
 import { EditorProps, ViewProps } from "./types";
 
@@ -16,7 +17,7 @@ const TextSlideView: React.FC<TextSlideViewProps> = ({ slide }) => {
     return (
         <div className="slide text-slide">
             <div className="clock-placeholder" />
-            <Markdown source={slide.content || ""} escapeHtml={false} />
+            <Markdown rehypePlugins={[rehypeRaw]}>{slide.content || ""}</Markdown>
         </div>
     );
 };
