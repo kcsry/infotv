@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -17,6 +18,7 @@ TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="refresh" content="43210" />
+    <link href="%(css_path)s" rel="stylesheet">
 </head>
 <body>
     <div id="tv"></div>
@@ -49,9 +51,11 @@ class InfoTvView(View):
 
     # noinspection PyUnusedLocal
     def get(self, request, *args, **kwargs):
+        theme = getattr(settings, "INFOTV_STYLE", "desucon")
         html = TEMPLATE % {
             "options_json": json.dumps(self.get_options()),
-            "bundle_path": staticfiles_storage.url("infotv/bundle.js")
+            "bundle_path": staticfiles_storage.url("infotv/bundle.js"),
+            "css_path": staticfiles_storage.url(f"infotv/{theme}.css")
         }
         return HttpResponse(html)
 

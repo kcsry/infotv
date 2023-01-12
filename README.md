@@ -40,9 +40,6 @@ Notes of other persuasions
     slides (useful for room-specific schedule displays)
   * `?deck=deckname` -- show slides from deck `deckname` instead of
     default deck
-* Setting the environment variable `INFOTV_STYLE` to something other than
-  the implicit "desucon" makes the Webpack build process read styles
-  from another `styles/...` subdirectory when creating the bundle.
 
 Settings
 --------
@@ -56,6 +53,8 @@ Settings
 * `INFOTV_EVENT_SLUG_ATTR`:
   The name of a "slug"/unique-identifier attribute in the event model above
   (if the default policy is used).  Defaults to `slug`.
+* `INFOTV_STYLE`:
+  The theme from `styles/...` subdirectory for the front-end. Defaults to `desucon`.
 
 Running tests
 -------------
