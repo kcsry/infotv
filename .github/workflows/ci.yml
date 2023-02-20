@@ -48,7 +48,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - run: yarn
+      - run: yarn --frozen-lockfile
         working-directory: ./infotv/frontend
       - run: yarn lint
         working-directory: ./infotv/frontend
