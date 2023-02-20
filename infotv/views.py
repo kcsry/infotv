@@ -8,8 +8,8 @@ from django.http.response import HttpResponse, JsonResponse
 from django.utils.encoding import force_str
 from django.views.generic import View
 
-from .models import Datum, SlideDeck
-from .policy import get_policy
+from infotv.models import Datum, SlideDeck
+from infotv.policy import get_policy
 
 TEMPLATE = """
 <!doctype html>

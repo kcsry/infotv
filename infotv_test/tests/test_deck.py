@@ -50,7 +50,7 @@ def test_post_deck(rf, settings):
     settings.INFOTV_POLICY_CLASS = "infotv.policy.AnythingGoesPolicy"
     request = get_deck_post_request()
     last_deck_id = 0
-    for x in range(3):
+    for _x in range(3):
         response = InfoTvView.as_view()(request=request, event="dsfargeg")
         assert response.status_code == 200
         deck_id = json.loads(force_str(response.content))["id"]
