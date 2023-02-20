@@ -3,6 +3,7 @@ import formatDate from "date-fns/esm/format";
 
 import isFinite from "lodash/isFinite";
 import DatumManager from "./DatumManager";
+import useCurrentDate from "./hooks/useCurrentDate";
 
 function renderWeather(weather: any) {
     if (!weather) {
@@ -33,28 +34,14 @@ function renderWeather(weather: any) {
     );
 }
 
-export default class OverlayComponent extends React.Component {
-    private clockUpdateTimer?: number;
-
-    public UNSAFE_componentWillMount() {
-        this.clockUpdateTimer = window.setInterval(() => {
-            this.forceUpdate();
-        }, 5000);
-    }
-
-    public componentWillUnmount() {
-        clearInterval(this.clockUpdateTimer);
-        this.clockUpdateTimer = undefined;
-    }
-
-    public render() {
-        const text = formatDate(new Date(), "HH:mm");
-        const weather = renderWeather(DatumManager.getValue("weather"));
-        return (
-            <div id="quad">
-                <div className="clock">{text}</div>
-                {weather}
-            </div>
-        );
-    }
+export default function OverlayComponent() {
+    const time = useCurrentDate();
+    const text = formatDate(time, "HH:mm");
+    const weather = renderWeather(DatumManager.getValue("weather"));
+    return (
+        <div id="quad">
+            <div className="clock">{text}</div>
+            {weather}
+        </div>
+    );
 }

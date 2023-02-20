@@ -11,38 +11,40 @@ interface SlidesComponentProps {
     currentSlide: Slide;
 }
 
-export default class SlidesComponent extends React.Component<SlidesComponentProps> {
-    public getSlideComponent(slideData: Slide) {
-        if (!slideData) {
-            return <div />;
-        }
-        const props = {
-            slide: slideData,
-            key: slideData.id,
-            tv: this.props.tv,
-            config: this.props.config,
-        };
-        const mod = slideModules[slideData.type];
-        if (mod) {
-            return React.createElement(mod.view, props);
-        }
-        return <div className="slide">(unknown slide type: {slideData.type})</div>;
+function getSlideComponent(slideData: Slide, tv: TVApp, config: Config) {
+    if (!slideData) {
+        return <div />;
     }
+    const props = {
+        slide: slideData,
+        key: slideData.id,
+        tv,
+        config,
+    };
+    const mod = slideModules[slideData.type];
+    if (mod) {
+        return React.createElement(mod.view, props);
+    }
+    return <div className="slide">(unknown slide type: {slideData.type})</div>;
+}
 
-    public render() {
-        const slideData = this.props.currentSlide;
-        let slideComponent = this.getSlideComponent(slideData);
-        if (this.props.animate) {
-            slideComponent = (
-                <ReactCSSTransitionGroup
-                    transitionName="slide"
-                    transitionEnterTimeout={1000}
-                    transitionLeaveTimeout={1000}
-                >
-                    {slideComponent}
-                </ReactCSSTransitionGroup>
-            );
-        }
-        return slideComponent;
+export default function SlidesComponent({
+    tv,
+    config,
+    animate,
+    currentSlide,
+}: SlidesComponentProps) {
+    let slideComponent = getSlideComponent(currentSlide, tv, config);
+    if (animate) {
+        slideComponent = (
+            <ReactCSSTransitionGroup
+                transitionName="slide"
+                transitionEnterTimeout={1000}
+                transitionLeaveTimeout={1000}
+            >
+                {slideComponent}
+            </ReactCSSTransitionGroup>
+        );
     }
+    return slideComponent;
 }
