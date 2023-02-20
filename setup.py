@@ -15,7 +15,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        "Django>=2.2",
+        "Django>=3.2",
         "jsonfield>=1.0.3",
         "requests>=2.13.0",
     ],
@@ -23,5 +23,5 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )

@@ -61,6 +61,6 @@ Running tests
 -------------
 
 ```
-pip install -r requirements-dev.txt
+pip install pytest-django
 py.test
 ```
