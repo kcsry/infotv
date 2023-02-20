@@ -1,10 +1,10 @@
 import { build } from "esbuild";
-import  { lessLoader } from 'esbuild-plugin-less'
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { readdir } from "fs/promises";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import lessLoader from './less-postcss-plugin.js';
 
 const { mode, watch } = yargs(hideBin(process.argv)).argv;
 
