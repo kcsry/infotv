@@ -5,7 +5,7 @@ import cx from "classnames";
 import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 
 import datumManager from "../DatumManager";
-import { ViewProps } from "./types";
+import useInterval from "../hooks/useInterval";
 
 const mediumIcons: Record<string, string> = {
     ig: "fa fa-instagram",
@@ -38,44 +38,24 @@ const renderSocialElement = (element: SocialElement) => {
     );
 };
 
-interface SocialSlideState {
-    timer?: number;
-    frame: number;
-}
-
-class SocialSlideView extends React.Component<ViewProps, SocialSlideState> {
-    public state: SocialSlideState = {
-        frame: 0,
-    };
-
-    public UNSAFE_componentWillMount() {
-        this.setState({ timer: window.setInterval(this.tick, 600) });
-    }
-
-    public componentWillUnmount() {
-        clearInterval(this.state.timer);
-    }
-
-    private tick = () => {
-        this.setState({ frame: this.state.frame + 1 });
-    };
-
-    public render() {
-        const items = datumManager.getValue("social") || [];
-        const limit = Math.min(this.state.frame, items.length);
-        const childElements = items.slice(0, limit).map(renderSocialElement);
-        return (
-            <div className="slide social-slide">
-                <ReactCSSTransitionGroup
-                    transitionName="social-item"
-                    transitionEnterTimeout={1000}
-                    transitionLeaveTimeout={1000}
-                >
-                    {childElements}
-                </ReactCSSTransitionGroup>
-            </div>
-        );
-    }
+function SocialSlideView() {
+    const [frame, setFrame] = React.useState(0);
+    const tick = React.useCallback(() => setFrame((frame) => frame + 1), []);
+    useInterval(tick, 600);
+    const items = datumManager.getValue("social") || [];
+    const limit = Math.min(frame, items.length);
+    const childElements = items.slice(0, limit).map(renderSocialElement);
+    return (
+        <div className="slide social-slide">
+            <ReactCSSTransitionGroup
+                transitionName="social-item"
+                transitionEnterTimeout={1000}
+                transitionLeaveTimeout={1000}
+            >
+                {childElements}
+            </ReactCSSTransitionGroup>
+        </div>
+    );
 }
 
 const module = {

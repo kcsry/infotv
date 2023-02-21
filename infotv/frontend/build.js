@@ -1,10 +1,10 @@
-import { build } from "esbuild";
+import { context } from "esbuild";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { readdir } from "fs/promises";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import lessLoader from './less-postcss-plugin.js';
+import lessLoader from "./less-postcss-plugin.js";
 
 const { mode, watch } = yargs(hideBin(process.argv)).argv;
 
@@ -24,7 +24,7 @@ async function getThemes() {
     return Object.fromEntries(entries);
 }
 
-build({
+const ctx = await context({
     bundle: true,
     entryPoints: {
         bundle: `${__dirname}/src/main.tsx`,
@@ -32,7 +32,6 @@ build({
     },
     outdir,
     publicPath,
-    watch,
     minify: mode === "production",
     plugins: [lessLoader()],
     loader: { ".png": "file", ".woff": "file" },
@@ -43,3 +42,9 @@ build({
         ),
     },
 });
+if (watch) {
+    void ctx.watch();
+} else {
+    await ctx.rebuild();
+    await ctx.dispose();
+}
