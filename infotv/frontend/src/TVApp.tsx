@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createRef, MutableRefObject } from "react";
 import QS from "query-string";
 import debounce from "lodash/debounce";
 import findIndex from "lodash/findIndex";
@@ -10,6 +10,7 @@ import Stagger from "./Stagger";
 import fetchJSON from "./fetchJSON";
 import { forceInt } from "./utils";
 import { Config, Deck, Slide, TVData } from "./types";
+import { isVideoSlide } from "./s/VideoSlide";
 
 function checkTallness() {
     document.body.classList.toggle("tall", window.innerWidth < window.innerHeight);
@@ -22,6 +23,7 @@ interface TVAppState {
     currentDeckName: string;
     id: number;
     edit: boolean;
+    videoRef?: MutableRefObject<HTMLVideoElement | null>;
 }
 
 interface TVAppProps {
@@ -46,6 +48,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             slideIndex: 0,
             ticksUntilNextSlide: 1,
             edit: false,
+            videoRef: createRef(),
         };
     }
 
@@ -111,10 +114,30 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         }
         const ticks = this.state.ticksUntilNextSlide - 1;
         this.setState({ ticksUntilNextSlide: ticks });
-        if (ticks <= 0) {
+        const currentSlide = this.getDeck()[this.state.slideIndex];
+        const isVideoRunning =
+            isVideoSlide(currentSlide) &&
+            currentSlide.style === "nextSlideAtEnd" &&
+            !this.state.videoRef?.current?.ended;
+        if (ticks <= 0 && !isVideoRunning) {
             this.nextSlide();
+        } else if (isVideoRunning) {
+            // Wait until video is done playing
+            const duration = this.state.videoRef?.current?.duration;
+            if (duration !== undefined && isFinite(duration)) {
+                clearInterval(this.slideSwitchTimer);
+                this.slideSwitchTimer = window.setTimeout(
+                    this.slideSwitchWait,
+                    (duration - (this.state.videoRef?.current?.currentTime ?? 0)) * 1000,
+                );
+            }
         }
         return true;
+    };
+
+    private slideSwitchWait = () => {
+        this.slideSwitchTimer = window.setInterval(this.slideSwitchTick, 3500);
+        this.nextSlide();
     };
 
     private nextSlide = () => {
