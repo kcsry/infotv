@@ -4,7 +4,8 @@ import { fileURLToPath } from "url";
 import { readdir } from "fs/promises";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import lessLoader from "./less-postcss-plugin.js";
+import postCssPlugin from "@baurine/esbuild-plugin-postcss3";
+import postCssEnv from "postcss-preset-env";
 
 const { mode, watch } = yargs(hideBin(process.argv)).argv;
 
@@ -33,9 +34,10 @@ const ctx = await context({
     outdir,
     publicPath,
     minify: mode === "production",
-    plugins: [lessLoader()],
+    plugins: [postCssPlugin.default({plugins: [postCssEnv]})],
     loader: { ".png": "file", ".woff": "file" },
     sourcemap: true,
+    logLevel: "info",
     define: {
         "process.env.NODE_ENV": JSON.stringify(
             mode === "production" ? "production" : "development",
