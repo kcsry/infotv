@@ -19,7 +19,7 @@ function checkStatus(response: Response): Promise<any> {
         });
 }
 
-export default function fetchJSON(url: string, opts: Partial<RequestInit> = {}): Promise<any> {
+export default function fetchJSON<T>(url: string, opts: Partial<RequestInit> = {}): Promise<T> {
     return fetch(url, { credentials: "same-origin", ...opts })
         .then(checkStatus)
         .then((response) => response.json());

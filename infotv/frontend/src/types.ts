@@ -11,6 +11,8 @@ export interface Slide {
     id: string;
     type: string;
     duration: number;
+    scheduleBegin?: Date;
+    scheduleEnd?: Date;
 }
 
 export type Deck = Slide[];

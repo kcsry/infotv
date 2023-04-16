@@ -2,7 +2,7 @@
     position: fixed;
     right: 0;
     top: 0;
-    width: 350px;
+    width: 420px;
     background: #000;
     opacity: 0.3;
     &:hover {
@@ -65,9 +65,17 @@
     padding-top: 5px;
     border-top: 1px dotted #3071a9;
     flex-wrap: nowrap;
+    justify-content: center;
     > * {
         flex-grow: 1;
     }
+    &.equal-width > * {
+        flex-basis: 100%;
+    }
+}
+
+input[type="datetime-local"] {
+    width: 100%;
 }
 
 .slide-editor-ctr {

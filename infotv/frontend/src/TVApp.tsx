@@ -5,7 +5,7 @@ import findIndex from "lodash/findIndex";
 import SlidesComponent from "./SlidesComponent";
 import OverlayComponent from "./OverlayComponent";
 import EditorComponent from "./EditorComponent";
-import datumManager from "./DatumManager";
+import datumManager, { Datum } from "./DatumManager";
 import Stagger from "./Stagger";
 import fetchJSON from "./fetchJSON";
 import { forceInt } from "./utils";
@@ -148,8 +148,12 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             newSlideIndex = Math.max(0, this.state.slideIndex + offset) % deck.length;
             const newSlide = deck[newSlideIndex];
             if (newSlide) {
-                if (forceInt(newSlide.duration) <= 0) {
-                    // skip zero-duration slides
+                if (
+                    forceInt(newSlide.duration) <= 0 ||
+                    (newSlide.scheduleBegin && newSlide.scheduleBegin > new Date()) ||
+                    (newSlide.scheduleEnd && newSlide.scheduleEnd < new Date())
+                ) {
+                    // skip zero-duration slides and based on schedule
                     continue;
                 }
                 ticksUntilNextSlide = newSlide.duration;
@@ -214,16 +218,26 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         if (this.state.edit) {
             return false;
         }
-        fetchJSON(`${location.pathname}?${QS.stringify({ action: "get_deck" })}`).then(
-            ({ id, data, datums }) => {
-                if (!this.state.data || !this.state.data.decks || this.state.id !== id) {
-                    console.log("new decks", data);
-                    this.setState({ data, id, slideIndex: -1 });
-                    this.nextSlide();
+        fetchJSON<{ id: number; data: TVData; datums: Record<string, Datum> }>(
+            `${location.pathname}?${QS.stringify({ action: "get_deck" })}`,
+        ).then(({ id, data, datums }) => {
+            if (!this.state.data || !this.state.data.decks || this.state.id !== id) {
+                for (const deck of Object.values(data.decks)) {
+                    for (const slide of deck) {
+                        if (slide.scheduleBegin) {
+                            slide.scheduleBegin = new Date(slide.scheduleBegin);
+                        }
+                        if (slide.scheduleEnd) {
+                            slide.scheduleEnd = new Date(slide.scheduleEnd);
+                        }
+                    }
                 }
-                datumManager.update(datums || {});
-            },
-        );
+                console.log("new decks", data);
+                this.setState({ data, id, slideIndex: -1 });
+                this.nextSlide();
+            }
+            datumManager.update(datums || {});
+        });
         return true;
     };
 

@@ -1,4 +1,4 @@
-interface Datum<T = any> {
+export interface Datum<T = any> {
     value: T;
     mtime: number;
     virtual?: boolean;
