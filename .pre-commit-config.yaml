@@ -1,7 +1,6 @@
 repos:
-
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.237
+    rev: v0.0.261
     hooks:
       - id: ruff
         args:
@@ -12,3 +11,8 @@ repos:
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.7.1
+    hooks:
+      - id: prettier
