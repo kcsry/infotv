@@ -28,7 +28,7 @@ class ImageSlideEditor extends React.Component<EditorProps<ImageSlide>> {
         return (
             <div className="image-slide-editor">
                 <label>
-                    Kuvan osoite:{" "}
+                    Kuvan osoite:
                     <input type="url" value={slide.src || ""} onChange={this.setSrc} />
                 </label>
             </div>

@@ -2,6 +2,7 @@ import DummyEditor from "./DummyEditor";
 import TextSlide from "./TextSlide";
 import ImageSlide from "./ImageSlide";
 import MultiImageSlide from "./MultiImageSlide";
+import VideoSlide from "./VideoSlide";
 import NowNextSlide from "./NowNextSlide";
 import SocialSlide from "./SocialSlide";
 import AnimeSlide from "./AnimeSlide";
@@ -11,6 +12,7 @@ export const slideModules: { [id: string]: SlideModule<any> } = {
     text: TextSlide,
     image: ImageSlide,
     "multi-image": MultiImageSlide,
+    video: VideoSlide,
     nownext: NowNextSlide,
     social: SocialSlide,
     anime: AnimeSlide,
