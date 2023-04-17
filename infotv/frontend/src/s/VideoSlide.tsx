@@ -45,7 +45,7 @@ class VideoSlideEditor extends React.Component<EditorProps<VideoSlide>> {
                 <label>
                     Videon osoite:
                     <input type="url" value={slide.src || ""} onChange={this.setSrc} />
-                    <select value={slide.style} onChange={this.setStyle}>
+                    <select value={slide.style ?? "loop"} onChange={this.setStyle}>
                         <option key="loop" value="loop">
                             Loop
                         </option>

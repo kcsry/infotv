@@ -46,6 +46,38 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 onChange={this.slideDurationChanged}
             />
         );
+        const slideBeginInput = (
+            <input
+                type="datetime-local"
+                value={
+                    currentSlide.scheduleBegin
+                        ? new Date(
+                              currentSlide.scheduleBegin.getTime() -
+                                  currentSlide.scheduleBegin.getTimezoneOffset() * 60 * 1000,
+                          )
+                              ?.toISOString()
+                              ?.slice(0, 16)
+                        : ""
+                }
+                onChange={this.slideBeginChanged}
+            />
+        );
+        const slideEndInput = (
+            <input
+                type="datetime-local"
+                value={
+                    currentSlide.scheduleEnd
+                        ? new Date(
+                              currentSlide.scheduleEnd.getTime() -
+                                  currentSlide.scheduleEnd.getTimezoneOffset() * 60 * 1000,
+                          )
+                              ?.toISOString()
+                              ?.slice(0, 16)
+                        : ""
+                }
+                onChange={this.slideEndChanged}
+            />
+        );
         return (
             <div className="slide-editor">
                 <div className="toolbar">
@@ -53,7 +85,11 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                     <button onClick={this.moveSlideUp}>Siirrä ylös</button>
                     <button onClick={this.moveSlideDown}>Siirrä alas</button>
                 </div>
-                <div className="toolbar">
+                <div className="toolbar equal-width">
+                    <label>Tulee näkyviin: {slideBeginInput}</label>
+                    <label>Poistuu näkyvistä: {slideEndInput}</label>
+                </div>
+                <div className="toolbar equal-width">
                     <label>Sliden tyyppi: {slideTypeSelect}</label>
                     <label>Sliden kesto: {slideDurationInput}&times;</label>
                 </div>
@@ -78,6 +114,32 @@ export default class EditorComponent extends React.Component<EditorComponentProp
             this.props.currentSlide.type = event.target.value;
         }
         this.props.tv.forceUpdate();
+    };
+
+    private slideBeginChanged = (event: any) => {
+        if (event.target.validity.valid && this.props.currentSlide) {
+            if (event.target.value) {
+                const date = new Date(event.target.value + "Z");
+                date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+                this.props.currentSlide.scheduleBegin = date;
+            } else {
+                this.props.currentSlide.scheduleBegin = undefined;
+            }
+            this.props.tv.forceUpdate();
+        }
+    };
+
+    private slideEndChanged = (event: any) => {
+        if (event.target.validity.valid && this.props.currentSlide) {
+            if (event.target.value) {
+                const date = new Date(event.target.value + "Z");
+                date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+                this.props.currentSlide.scheduleEnd = date;
+            } else {
+                this.props.currentSlide.scheduleEnd = undefined;
+            }
+            this.props.tv.forceUpdate();
+        }
     };
 
     private moveSlide(slide: Slide, direction: number) {
