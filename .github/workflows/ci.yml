@@ -45,13 +45,41 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
+          cache: yarn
+          cache-dependency-path: |
+            infotv/frontend/package.json
+            infotv/frontend/yarn.lock
       - run: yarn --frozen-lockfile
         working-directory: ./infotv/frontend
       - run: yarn lint
         working-directory: ./infotv/frontend
       - run: yarn build
         working-directory: ./infotv/frontend
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
       - run: yarn test
         working-directory: ./infotv/frontend
+      - uses: actions/upload-artifact@v3
+        with:
+          name: infotv-static
+          path: ./infotv/static
+
+  Build-Wheel:
+    needs:
+      - JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: pip
+      - uses: actions/download-artifact@v2
+        with:
+          name: infotv-static
+          path: infotv/static
+      - run: pip install build
+      - run: python -m build .
+      - run: zipinfo dist/*.whl | grep static/infotv/bundle.js || exit 42
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
