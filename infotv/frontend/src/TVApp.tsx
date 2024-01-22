@@ -116,6 +116,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         this.setState({ ticksUntilNextSlide: ticks });
         const currentSlide = this.getDeck()[this.state.slideIndex];
         const isVideoRunning =
+            currentSlide &&
             isVideoSlide(currentSlide) &&
             currentSlide.style === "nextSlideAtEnd" &&
             !this.state.videoRef?.current?.ended;
