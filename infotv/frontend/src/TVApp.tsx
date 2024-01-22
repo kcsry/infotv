@@ -141,7 +141,6 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
     };
 
     private nextSlide = () => {
-        let ticksUntilNextSlide = 1;
         let newSlideIndex = this.state.slideIndex;
         const deck = this.getDeck();
         for (let offset = 1; offset <= deck.length + 1; offset++) {
@@ -156,11 +155,13 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
                     // skip zero-duration slides and based on schedule
                     continue;
                 }
-                ticksUntilNextSlide = newSlide.duration;
+                this.setState({
+                    slideIndex: newSlideIndex,
+                    ticksUntilNextSlide: newSlide.duration,
+                });
                 break;
             }
         }
-        this.setState({ slideIndex: newSlideIndex, ticksUntilNextSlide });
     };
 
     public viewSlideById = (id: string) => {
