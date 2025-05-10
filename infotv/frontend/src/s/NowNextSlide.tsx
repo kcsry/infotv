@@ -1,9 +1,11 @@
 import cx from "classnames";
 import React from "react";
 import formatDate from "date-fns/esm/format";
+import { QRCodeSVG } from "qrcode.react";
 
 import datumManager from "../DatumManager";
 import { ViewProps } from "./types";
+import { Config } from "../types";
 
 interface ProgramTimes {
     startTime: string;
@@ -12,16 +14,26 @@ interface ProgramTimes {
 }
 
 interface Program {
+    identifier: string;
     start_ts: number;
     end_ts: number;
     title: string;
     location: string;
+    tags_full?: [
+        {
+            identifier: string;
+            icon: string;
+        },
+    ];
 }
 
 interface Schedule {
     location_order?: string[];
     programs: Program[];
 }
+
+/** Duration of breaks between programs in seconds. */
+const BREAK_DURATION = 15 * 60;
 
 function getTimes(prog: Program): ProgramTimes {
     const startDate = new Date(prog.start_ts * 1000);
@@ -49,24 +61,64 @@ function renderProgram(prog: Program) {
     );
 }
 
-function renderSingleLocFragment(title: string, times: ProgramTimes, prog: Program) {
+function renderSingleLocFragment(
+    config: Config,
+    title: string,
+    times: ProgramTimes,
+    prog: Program,
+    showQr: boolean,
+) {
+    const icons = prog.tags_full?.filter((tag) => tag.icon?.includes("fa-"));
+    const isCameraBan = prog.tags_full?.some((tag) => tag.icon?.includes("custom-camera-ban"));
+    const isVideoBan = prog.tags_full?.some((tag) => tag.icon?.includes("custom-video-ban"));
     return (
         <div className={times.className}>
-            <div className="ntitle">{title}</div>
-            <div className="times">
-                {times.startTime} &ndash; {times.endTime}
+            <div className="texts">
+                <div className="ntitle">{title}</div>
+                <div className="timesrow">
+                    <span className="times">
+                        {times.startTime} &ndash; {times.endTime}
+                    </span>
+                    <span className="icons">
+                        {icons?.map((icon) => {
+                            return <i key={icon.identifier} className={cx(icon.icon, "fa-xl")} />;
+                        })}
+                        {isCameraBan ? (
+                            <span className="fa-stack">
+                                <i className={"fa-solid fa-camera fa-stack-1x"} />
+                                <i className={"fa-solid fa-ban fa-stack-2x"} />
+                            </span>
+                        ) : null}
+                        {isVideoBan ? (
+                            <span className="fa-stack">
+                                <i className={"fa-solid fa-video fa-stack-1x"} />
+                                <i className={"fa-solid fa-ban fa-stack-2x"} />
+                            </span>
+                        ) : null}
+                    </span>
+                </div>
+                <div className="title">{prog.title}</div>
             </div>
-            <div className="title">{prog.title}</div>
+            {showQr ? (
+                <div className="qrcode">
+                    <QRCodeSVG
+                        value={`https://desucon.fi/${config.event}/ohjelma/${prog.identifier}/`}
+                        size={1000}
+                        marginSize={2}
+                    />
+                    <span>Anna palautetta</span>
+                </div>
+            ) : null}
         </div>
     );
 }
 
-function renderSingleLoc(loc: string, currentProg?: Program, nextProg?: Program) {
+function renderSingleLoc(config: Config, loc: string, currentProg?: Program, nextProg?: Program) {
     const nowElems = currentProg
-        ? renderSingleLocFragment("Nyt", getTimes(currentProg), currentProg)
+        ? renderSingleLocFragment(config, "Nyt", getTimes(currentProg), currentProg, true)
         : null;
     const nextElems = nextProg
-        ? renderSingleLocFragment("Seuraavaksi", getTimes(nextProg), nextProg)
+        ? renderSingleLocFragment(config, "Seuraavaksi", getTimes(nextProg), nextProg, false)
         : null;
     return (
         <div className="slide nownext-single-slide">
@@ -93,10 +145,12 @@ const NowNextSlideView: React.FC<ViewProps> = ({ config }) => {
             return;
         }
         const programs = schedule.programs.filter((prog) => prog.location === loc);
-        const currentProg = programs.find((prog) => nowTs >= prog.start_ts && nowTs < prog.end_ts);
-        const nextProg = programs.find((prog) => prog.start_ts >= nowTs);
+        const currentProg = programs.find(
+            (prog) => nowTs >= prog.start_ts && nowTs < prog.end_ts + BREAK_DURATION,
+        );
+        const nextProg = programs.find((prog) => prog.start_ts > nowTs);
         if (onlyLoc) {
-            onlyLocContent = renderSingleLoc(loc, currentProg, nextProg);
+            onlyLocContent = renderSingleLoc(config, loc, currentProg, nextProg);
         }
         if (!(currentProg || nextProg)) {
             return;

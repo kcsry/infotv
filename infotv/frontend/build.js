@@ -35,7 +35,7 @@ const ctx = await context({
     publicPath,
     minify: mode === "production",
     plugins: [postCssPlugin.default({ plugins: [postCssEnv] })],
-    loader: { ".png": "file", ".woff": "file" },
+    loader: { ".png": "file", ".woff": "file", ".woff2": "file", ".ttf": "file" },
     sourcemap: true,
     logLevel: "info",
     define: {

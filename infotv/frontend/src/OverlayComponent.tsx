@@ -4,6 +4,7 @@ import formatDate from "date-fns/esm/format";
 import isFinite from "lodash/isFinite";
 import DatumManager from "./DatumManager";
 import useCurrentDate from "./hooks/useCurrentDate";
+import { Config, Slide } from "./types";
 
 function renderWeather(weather: any) {
     if (!weather) {
@@ -34,12 +35,20 @@ function renderWeather(weather: any) {
     );
 }
 
-export default function OverlayComponent() {
+interface OverlayComponentProps {
+    config: Config;
+    currentSlide?: Slide;
+}
+
+export default function OverlayComponent({ config, currentSlide }: OverlayComponentProps) {
     const time = useCurrentDate();
     const text = formatDate(time, "HH:mm");
     const weather = renderWeather(DatumManager.getValue("weather"));
     return (
-        <div id="quad">
+        <div
+            id="quad"
+            className={currentSlide?.type === "nownext" && config.loc ? "left" : undefined}
+        >
             <div className="clock">{text}</div>
             {weather}
         </div>
