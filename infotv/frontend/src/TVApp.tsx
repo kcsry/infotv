@@ -296,7 +296,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         return (
             <div>
                 <div id="content" key="content">
-                    <OverlayComponent />
+                    <OverlayComponent config={config} currentSlide={currentSlide} />
                     {currentSlide ? (
                         <SlidesComponent
                             tv={this}

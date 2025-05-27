@@ -10,10 +10,24 @@
 	line-height: 1;
 	opacity: 0.7;
 	text-align: right;
+
 	.weather {
 		font-size: 2vmax;
 		img {
 			height: 2vmax;
+		}
+	}
+
+	&.left {
+		display: flex;
+		float: left;
+		margin-top: -2vmax;
+		margin-left: -2vmax;
+
+		.weather {
+			display: flex;
+			align-items: center;
+			margin-left: 1.5vmax;
 		}
 	}
 }
