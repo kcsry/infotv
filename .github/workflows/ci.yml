@@ -10,11 +10,8 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - uses: pre-commit/action@v3.0.0
+      - uses: actions/checkout@v4
+      - uses: akx/pre-commit-uv-action@v0.1.0
   Python:
     runs-on: ubuntu-latest
     env:
@@ -22,29 +19,22 @@ jobs:
     strategy:
       matrix:
         include:
-          - python-version: "3.7"
-          - python-version: "3.11"
+          - python-version: "3.9"
+          - python-version: "3.13"
     steps:
-      - uses: actions/checkout@v3
-      - name: "Set up Python ${{ matrix.python-version }}"
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: "${{ matrix.python-version }}"
-          cache: pip
-          cache-dependency-path: |
-            pyproject.toml
-            setup.py
-            tox.ini
-      - run: pip install -U tox tox-gh-actions
-      - run: tox
-      - uses: codecov/codecov-action@v3
+      - run: uvx --with=tox-gh-actions --with=tox-uv tox
+      - uses: codecov/codecov-action@v5
   JavaScript:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 22.x
           cache: yarn
           cache-dependency-path: |
             infotv/frontend/package.json
@@ -57,7 +47,7 @@ jobs:
         working-directory: ./infotv/frontend
       - run: yarn test
         working-directory: ./infotv/frontend
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: infotv-static
           path: ./infotv/static
@@ -67,19 +57,17 @@ jobs:
       - JavaScript
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
         with:
-          python-version: "3.11"
-          cache: pip
-      - uses: actions/download-artifact@v2
+          python-version: "3.13"
+      - uses: actions/download-artifact@v4
         with:
           name: infotv-static
           path: infotv/static
-      - run: pip install build
-      - run: python -m build .
+      - run: uv build .
       - run: zipinfo dist/*.whl | grep static/infotv/bundle.js || exit 42
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
