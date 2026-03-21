@@ -1,5 +1,5 @@
 import React from "react";
-import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import TVApp from "./TVApp";
 import { Config, Slide } from "./types";
 import slideModules from "./s";
@@ -37,13 +37,11 @@ export default function SlidesComponent({
     let slideComponent = getSlideComponent(currentSlide, tv, config);
     if (animate) {
         slideComponent = (
-            <ReactCSSTransitionGroup
-                transitionName="slide"
-                transitionEnterTimeout={1000}
-                transitionLeaveTimeout={1000}
-            >
-                {slideComponent}
-            </ReactCSSTransitionGroup>
+            <TransitionGroup>
+                <CSSTransition key={currentSlide.id} classNames="slide" timeout={1000}>
+                    {slideComponent}
+                </CSSTransition>
+            </TransitionGroup>
         );
     }
     return slideComponent;

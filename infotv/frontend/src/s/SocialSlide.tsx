@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 import formatDate from "date-fns/esm/format";
 import parseISO from "date-fns/esm/parseISO";
 import cx from "classnames";
-import ReactCSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import datumManager from "../DatumManager";
 import useInterval from "../hooks/useInterval";
@@ -47,13 +47,13 @@ function SocialSlideView() {
     const childElements = items.slice(0, limit).map(renderSocialElement);
     return (
         <div className="slide social-slide">
-            <ReactCSSTransitionGroup
-                transitionName="social-item"
-                transitionEnterTimeout={1000}
-                transitionLeaveTimeout={1000}
-            >
-                {childElements}
-            </ReactCSSTransitionGroup>
+            <TransitionGroup>
+                {childElements.map((el) => (
+                    <CSSTransition key={el.key} classNames="social-item" timeout={1000}>
+                        {el}
+                    </CSSTransition>
+                ))}
+            </TransitionGroup>
         </div>
     );
 }
