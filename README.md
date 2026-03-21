@@ -11,13 +11,13 @@ and `pip install -e` to set things up.
 
 ```
 pip install -e .
-(cd infotv/frontend && npm i && npm run build)
+(cd infotv/frontend && yarn && yarn build)
 (python manage.py migrate && python manage.py runserver)
 ```
 
 ## Notes for deployment
 
-- Use `npm run release` instead of `npm run build`
+- Use `yarn release` instead of `yarn build`
   when deploying. Otherwise your bandwidth will be sad.
 - The `infotv_cache_weather` management command should be run
   periodically to cache weather data (if required).
