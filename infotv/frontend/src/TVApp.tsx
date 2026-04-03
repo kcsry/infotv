@@ -57,7 +57,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         };
     }
 
-    public UNSAFE_componentWillMount() {
+    public componentDidMount() {
         const { config } = this.props;
         this.deckUpdater = new Stagger({
             min: 50 * 1000,
@@ -86,9 +86,6 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         this.requestSocial();
         window.addEventListener("resize", debounce(checkTallness, 200));
         checkTallness();
-    }
-
-    public componentDidMount() {
         // After first commit, the aside DOM node exists — re-render so the editor portal attaches.
         if (this.state.edit) {
             this.forceUpdate();

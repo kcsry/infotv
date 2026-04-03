@@ -132,7 +132,7 @@ function renderSingleLoc(config: Config, loc: string, currentProg?: Program, nex
 
 const NowNextSlideView: React.FC<ViewProps> = ({ config }) => {
     const onlyLoc = config.loc;
-    const content: Array<React.ReactChild> = [];
+    const content: Array<React.ReactElement> = [];
     let onlyLocContent;
     const schedule = datumManager.getValue<Schedule>("schedule");
     if (!schedule) {

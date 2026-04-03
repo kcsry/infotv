@@ -56,7 +56,7 @@ class MultiImageSlideView extends React.Component<
         };
     }
 
-    public UNSAFE_componentWillMount() {
+    public componentDidMount() {
         this.setState({
             updateTimer: window.setInterval(this.tick, 100),
         });

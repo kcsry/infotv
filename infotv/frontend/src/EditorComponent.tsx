@@ -48,7 +48,7 @@ export default class EditorComponent extends React.Component<
 
     public getSlideEditor(currentSlide: Slide) {
         const slideModule = slideModules[currentSlide.type];
-        let editorComponent: React.ReactChild = <div>No editor for ${currentSlide.type}</div>;
+        let editorComponent: React.ReactElement = <div>No editor for ${currentSlide.type}</div>;
         if (slideModule && slideModule.editor) {
             editorComponent = React.createElement(slideModule.editor, {
                 slide: currentSlide,
