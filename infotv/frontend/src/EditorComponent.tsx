@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import fetchJSON from "./fetchJSON";
 import slideModules from "./s";
 import { Config, Slide, TVData } from "./types";
@@ -13,8 +14,37 @@ interface EditorComponentProps {
     currentSlide?: Slide;
 }
 
-export default class EditorComponent extends React.Component<EditorComponentProps> {
-    private newDeckInputRef: React.RefObject<HTMLInputElement> = React.createRef();
+interface EditorComponentState {
+    advancedEdit: boolean;
+    deckEditMode: null | "create" | "rename";
+    deckInputValue: string;
+    isDirty: boolean;
+    previewVertical: boolean;
+}
+
+export default class EditorComponent extends React.Component<
+    EditorComponentProps,
+    EditorComponentState
+> {
+    private deckInputRef: React.RefObject<HTMLInputElement> = React.createRef();
+    private deckEditCancelling = false;
+
+    public state: EditorComponentState = {
+        advancedEdit: localStorage.getItem("editor.advancedEdit") === "true",
+        deckEditMode: null,
+        deckInputValue: "",
+        isDirty: false,
+        previewVertical: localStorage.getItem("editor.previewVertical") === "true",
+    };
+
+    public markDirty = () => this.setState({ isDirty: true });
+
+    private togglePreviewOrientation = () => {
+        const previewVertical = !this.state.previewVertical;
+        localStorage.setItem("editor.previewVertical", String(previewVertical));
+        document.getElementById("editor")?.classList.toggle("preview-vertical", previewVertical);
+        this.setState({ previewVertical });
+    };
 
     public getSlideEditor(currentSlide: Slide) {
         const slideModule = slideModules[currentSlide.type];
@@ -78,41 +108,59 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 onChange={this.slideEndChanged}
             />
         );
+        const { advancedEdit } = this.state;
+        const isHidden = currentSlide.duration <= 0;
         return (
             <div className="slide-editor">
-                <div className="toolbar">
-                    <button onClick={this.props.tv.deleteCurrentSlide}>Poista</button>
-                    <button onClick={this.moveSlideUp}>Siirrä ylös</button>
-                    <button onClick={this.moveSlideDown}>Siirrä alas</button>
+                <div className="slide-editor-col">
+                    <div className={`toolbar${advancedEdit ? " equal-width" : ""}`}>
+                        <label>Sliden tyyppi: {slideTypeSelect}</label>
+                        {advancedEdit && <label>Sliden kesto: {slideDurationInput}&times;</label>}
+                    </div>
+                    {editorComponent}
                 </div>
-                <div className="toolbar equal-width">
-                    <label>Tulee näkyviin: {slideBeginInput}</label>
-                    <label>Poistuu näkyvistä: {slideEndInput}</label>
+                <div className="slide-editor-col">
+                    <label className="field-label">Tulee näkyviin: {slideBeginInput}</label>
+                    <label className="field-label">Poistuu näkyvistä: {slideEndInput}</label>
+                    {!advancedEdit && (
+                        <button onClick={this.toggleSlideVisibility}>
+                            {isHidden ? "Näytä slide" : "Piilota slide"}
+                        </button>
+                    )}
+                    <button onClick={this.deleteCurrentSlide}>Poista slide</button>
+                    <button
+                        className="preview-aspectratio-btn"
+                        onClick={this.togglePreviewOrientation}
+                    >
+                        {this.state.previewVertical ? "Horizontal" : "Vertical"}
+                    </button>
                 </div>
-                <div className="toolbar equal-width">
-                    <label>Sliden tyyppi: {slideTypeSelect}</label>
-                    <label>Sliden kesto: {slideDurationInput}&times;</label>
-                </div>
-                {editorComponent}
             </div>
         );
     }
 
+    public componentDidMount() {
+        if (this.state.previewVertical) {
+            document.getElementById("editor")?.classList.add("preview-vertical");
+        }
+    }
+
+    private slideClicked = (id: string) => {
+        this.props.tv.viewSlideById(id);
+    };
+
     private eepChanged = (event: any) => {
         const eep = event.target.value;
         this.props.data.eep = eep && eep.length ? eep : null;
+        this.markDirty();
         this.props.tv.forceUpdate();
-    };
-
-    private slideChanged = (event: any) => {
-        const id = event.target.value;
-        this.props.tv.viewSlideById(id);
     };
 
     private slideTypeChanged = (event: any) => {
         if (this.props.currentSlide) {
             this.props.currentSlide.type = event.target.value;
         }
+        this.markDirty();
         this.props.tv.forceUpdate();
     };
 
@@ -125,6 +173,7 @@ export default class EditorComponent extends React.Component<EditorComponentProp
             } else {
                 this.props.currentSlide.scheduleBegin = undefined;
             }
+            this.markDirty();
             this.props.tv.forceUpdate();
         }
     };
@@ -138,44 +187,32 @@ export default class EditorComponent extends React.Component<EditorComponentProp
             } else {
                 this.props.currentSlide.scheduleEnd = undefined;
             }
+            this.markDirty();
             this.props.tv.forceUpdate();
         }
     };
 
-    private moveSlide(slide: Slide, direction: number) {
+    private dragSrcId: string | null = null;
+
+    private moveSlide = (targetId: string) => {
+        const srcId = this.dragSrcId;
+        this.dragSrcId = null;
+        if (!srcId || srcId === targetId) return;
         const slides = this.props.tv.getDeck();
-        const idx = slides.indexOf(slide);
-        if (idx === -1) {
-            return;
-        }
-        slides.splice(idx, 1);
-        let newIdx = idx + direction;
-        if (newIdx < 0) {
-            newIdx = 0;
-        }
-        if (newIdx >= slides.length) {
-            newIdx = slides.length;
-        }
-        slides.splice(newIdx, 0, slide);
-    }
-
-    private moveSlideUp = () => {
-        if (this.props.currentSlide) {
-            this.moveSlide(this.props.currentSlide, -1);
-            this.props.tv.viewSlideById(this.props.currentSlide.id);
-        }
-    };
-
-    private moveSlideDown = () => {
-        if (this.props.currentSlide) {
-            this.moveSlide(this.props.currentSlide, +1);
-            this.props.tv.viewSlideById(this.props.currentSlide.id);
-        }
+        const srcIdx = slides.findIndex((s) => s.id === srcId);
+        if (srcIdx === -1) return;
+        const [removed] = slides.splice(srcIdx, 1);
+        const newTgtIdx = slides.findIndex((s) => s.id === targetId);
+        if (newTgtIdx === -1) return;
+        slides.splice(newTgtIdx, 0, removed);
+        this.markDirty();
+        this.props.tv.viewSlideById(removed.id);
     };
 
     private slideDurationChanged = (event: any) => {
         if (this.props.currentSlide) {
             this.props.currentSlide.duration = parseInt(event.target.value, 10);
+            this.markDirty();
             this.props.tv.forceUpdate();
         }
     };
@@ -185,38 +222,103 @@ export default class EditorComponent extends React.Component<EditorComponentProp
             alert("Ei voi julkaista tyhjää Default-pakkaa");
             return false;
         }
-        if (!confirm("Oletko varma että haluat julkaista nykyisen pakan?")) {
-            return false;
-        }
         const deckFormData = new FormData();
         deckFormData.append("action", "post_deck");
         deckFormData.append("data", JSON.stringify(this.props.data));
         fetchJSON(location.pathname, { method: "POST", body: deckFormData })
-            .then((data) => {
+            .then((data: any) => {
                 alert(data.message || "wut :(");
+                this.setState({ isDirty: false });
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 alert((err.body && err.body.message) || "it broke");
             });
         return true;
+    };
+
+    private toggleSlideVisibility = () => {
+        if (!this.props.currentSlide) return;
+        this.props.currentSlide.duration = this.props.currentSlide.duration <= 0 ? 1 : 0;
+        this.markDirty();
+        this.props.tv.forceUpdate();
+    };
+
+    private advancedEditChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const advancedEdit = event.target.checked;
+        localStorage.setItem("editor.advancedEdit", String(advancedEdit));
+        if (!advancedEdit && this.props.currentDeckName !== "default") {
+            this.props.tv.changeDeck("default");
+        }
+        this.setState({ advancedEdit });
     };
 
     private deckChanged = (event: any) => {
         this.props.tv.changeDeck(event.target.value);
     };
 
-    private addNewDeck = () => {
-        // TODO: Ahaha, this is shitty and non-Reactful :D
-        const newDeckInput = this.newDeckInputRef.current;
-        if (newDeckInput) {
-            const newDeckName = newDeckInput.value.trim().toLowerCase();
-            this.props.tv.addNewDeck(newDeckName);
-            newDeckInput.value = "";
+    private startCreateDeck = () => {
+        this.deckEditCancelling = false;
+        this.setState({ deckEditMode: "create", deckInputValue: "" }, () => {
+            this.deckInputRef.current?.focus();
+        });
+    };
+
+    private startRenameDeck = () => {
+        this.deckEditCancelling = false;
+        this.setState(
+            { deckEditMode: "rename", deckInputValue: this.props.currentDeckName },
+            () => {
+                this.deckInputRef.current?.select();
+            },
+        );
+    };
+
+    private commitDeckEdit = () => {
+        if (this.deckEditCancelling) return;
+        const { deckEditMode, deckInputValue } = this.state;
+        this.setState({ deckEditMode: null, deckInputValue: "" });
+        const name = deckInputValue.trim().toLowerCase();
+        if (!name) return;
+        if (deckEditMode === "create") {
+            this.props.tv.addNewDeck(name);
+            this.markDirty();
+        } else if (deckEditMode === "rename") {
+            const { currentDeckName, data } = this.props;
+            if (name === currentDeckName) return;
+            if (data.decks[name]) {
+                alert("Pakka on jo olemassa.");
+                return;
+            }
+            data.decks[name] = data.decks[currentDeckName];
+            delete data.decks[currentDeckName];
+            this.markDirty();
+            this.props.tv.changeDeck(name);
         }
     };
 
+    private cancelDeckEdit = () => {
+        this.deckEditCancelling = true;
+        this.setState({ deckEditMode: null, deckInputValue: "" });
+    };
+
+    private deckInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") this.commitDeckEdit();
+        else if (e.key === "Escape") this.cancelDeckEdit();
+    };
+
     private deleteDeck = () => {
+        this.markDirty();
         this.props.tv.deleteCurrentDeck();
+    };
+
+    private addNewSlide = () => {
+        this.markDirty();
+        this.props.tv.addNewSlide();
+    };
+
+    private deleteCurrentSlide = () => {
+        this.markDirty();
+        this.props.tv.deleteCurrentSlide();
     };
 
     public render() {
@@ -228,73 +330,148 @@ export default class EditorComponent extends React.Component<EditorComponentProp
                 {name}
             </option>
         ));
+        const { deckEditMode, deckInputValue } = this.state;
+        const { currentSlide, currentDeckName } = this.props;
         const slides = this.props.tv.getDeck();
-        const slideOptions = slides.map((s, i) => {
-            let text = `Slide ${i + 1} (${s.type}) `;
+        const slideItems = slides.map((s, i) => {
+            let label = `${i + 1}. ${s.type}`;
             if (s.type === "text") {
-                let contentTrim = (s as TextSlide).content || "";
-                if (contentTrim.length > 15) {
-                    contentTrim = `${contentTrim.substr(0, 15)}...`;
+                let preview = (s as TextSlide).content || "";
+                if (preview.length > 20) {
+                    preview = `${preview.substring(0, 20)}…`;
                 }
-                text += `"${contentTrim}"`;
-            } else {
-                text += `[${s.id}]`;
+                if (preview) label += `: ${preview}`;
             }
-            if (s.duration <= 0) {
-                text += " (ei päällä)";
-            }
+            const classes = [
+                "slide-item",
+                currentSlide?.id === s.id && "selected",
+                s.duration <= 0 && "inactive",
+            ]
+                .filter(Boolean)
+                .join(" ");
             return (
-                <option key={s.id} value={s.id}>
-                    {text}
-                </option>
+                <li
+                    key={s.id}
+                    className={classes}
+                    draggable
+                    onClick={() => this.slideClicked(s.id)}
+                    onDragStart={() => {
+                        this.dragSrcId = s.id;
+                    }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={() => this.moveSlide(s.id)}
+                >
+                    {label}
+                </li>
             );
         });
-        const { currentSlide } = this.props;
-        const slideEditor = currentSlide ? this.getSlideEditor(currentSlide) : null;
+        const { advancedEdit } = this.state;
+        const topPanel = document.getElementById("editor-top");
+        const slideEditorPortal =
+            topPanel && currentSlide
+                ? createPortal(this.getSlideEditor(currentSlide), topPanel)
+                : null;
         return (
-            <div>
-                <div className="editor-toolbar toolbar">
-                    <button onClick={this.confirmAndPublish}>Julkaise muutokset</button>
-                </div>
-                <div className="eep-editor toolbar">
-                    <label htmlFor="eep-input">Erikoisviesti:&nbsp;</label>
-                    <input
-                        value={this.props.data.eep || ""}
-                        onChange={this.eepChanged}
-                        id="eep-input"
-                    />
-                </div>
-                <div className="toolbar-header">Pakka</div>
-                <div className="deck-selector toolbar">
-                    <select
-                        value={this.props.currentDeckName ? this.props.currentDeckName : ""}
-                        onChange={this.deckChanged}
-                        id="editor-select-deck"
+            <div className="aside-content">
+                <h2>InfoTV</h2>
+                {slideEditorPortal}
+                {advancedEdit && (
+                    <>
+                        <div className="toolbar-header">
+                            Pakka
+                            <button
+                                className="header-icon-btn icon-btn"
+                                title="Uusi pakka"
+                                onClick={this.startCreateDeck}
+                            >
+                                <i className="fas fa-plus" />
+                            </button>
+                        </div>
+                        <div className="deck-controls toolbar">
+                            {deckEditMode ? (
+                                <input
+                                    ref={this.deckInputRef}
+                                    className="deck-name-input"
+                                    value={deckInputValue}
+                                    placeholder={
+                                        deckEditMode === "create"
+                                            ? "Uusi pakka..."
+                                            : "Pakan nimi..."
+                                    }
+                                    onChange={(e) =>
+                                        this.setState({ deckInputValue: e.target.value })
+                                    }
+                                    onBlur={this.commitDeckEdit}
+                                    onKeyDown={this.deckInputKeyDown}
+                                />
+                            ) : (
+                                <select
+                                    value={currentDeckName ?? ""}
+                                    onChange={this.deckChanged}
+                                    id="editor-select-deck"
+                                >
+                                    {deckOptions}
+                                </select>
+                            )}
+                            {currentDeckName !== "default" && !deckEditMode && (
+                                <button
+                                    className="icon-btn"
+                                    title="Nimeä uudelleen"
+                                    onClick={this.startRenameDeck}
+                                >
+                                    <i className="fas fa-pen" />
+                                </button>
+                            )}
+                            {currentDeckName !== "default" && !deckEditMode && (
+                                <button
+                                    className="icon-btn"
+                                    title="Poista pakka"
+                                    onClick={this.deleteDeck}
+                                >
+                                    <i className="fas fa-trash" />
+                                </button>
+                            )}
+                        </div>
+                    </>
+                )}
+                <div className="toolbar-header">
+                    Slide
+                    <button
+                        className="header-icon-btn icon-btn"
+                        title="Uusi slide"
+                        onClick={this.addNewSlide}
                     >
-                        {deckOptions}
-                    </select>
-                </div>
-                <div className="deck-creator toolbar">
-                    <label>
-                        Nimi: <input ref={this.newDeckInputRef} id="new-deck-name" />
-                    </label>
-                    <button onClick={this.addNewDeck}>Uusi pakka</button>
-                    <button onClick={this.deleteDeck} disabled={!this.props.currentDeckName}>
-                        Poista
+                        <i className="fas fa-plus" />
                     </button>
                 </div>
-                <div className="toolbar-header">Slide</div>
-                <div className="slide-selector toolbar">
-                    <select
-                        value={currentSlide ? currentSlide.id : ""}
-                        onChange={this.slideChanged}
-                        id="editor-select-slide"
-                    >
-                        {slideOptions}
-                    </select>
-                    <button onClick={this.props.tv.addNewSlide}>Uusi slide</button>
+                <ul className="slide-list">{slideItems}</ul>
+                <div className="aside-bottom">
+                    <div className="eep-editor toolbar">
+                        <label htmlFor="eep-input">Erikoisviesti:&nbsp;</label>
+                        <input
+                            value={this.props.data.eep || ""}
+                            onChange={this.eepChanged}
+                            id="eep-input"
+                        />
+                    </div>
+                    <label className="toolbar advanced-edit-toggle">
+                        <input
+                            type="checkbox"
+                            checked={advancedEdit}
+                            onChange={this.advancedEditChanged}
+                        />
+                        &nbsp;Advanced
+                    </label>
+                    <div className="editor-toolbar toolbar">
+                        <button
+                            className="save-btn"
+                            onClick={this.confirmAndPublish}
+                            disabled={!this.state.isDirty}
+                        >
+                            Tallenna
+                        </button>
+                    </div>
                 </div>
-                <div className="slide-editor-ctr">{slideEditor}</div>
             </div>
         );
     }

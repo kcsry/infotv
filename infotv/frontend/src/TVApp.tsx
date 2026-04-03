@@ -1,4 +1,5 @@
 import React, { createRef, MutableRefObject } from "react";
+import { createPortal } from "react-dom";
 import QS from "query-string";
 import debounce from "lodash/debounce";
 import findIndex from "lodash/findIndex";
@@ -43,7 +44,11 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         const { config } = props;
         this.state = {
             data: { decks: {} },
-            currentDeckName: config.deck ? config.deck.toLowerCase() : "default",
+            currentDeckName: config.deck
+                ? config.deck.toLowerCase()
+                : config.edit
+                ? localStorage.getItem("editor.currentDeck") ?? "default"
+                : "default",
             id: -1,
             slideIndex: 0,
             ticksUntilNextSlide: 1,
@@ -71,16 +76,23 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         });
         this.slideSwitchTimer = window.setInterval(this.slideSwitchTick, 3500);
         this.madokaTimer = window.setInterval(this.madokaTick, 10000);
-        this.requestDeck();
-        this.requestSchedule();
-        this.requestSocial();
         if (config.edit) {
             this.enableEditing();
         } else {
             document.body.classList.add("show");
         }
+        this.requestDeck();
+        this.requestSchedule();
+        this.requestSocial();
         window.addEventListener("resize", debounce(checkTallness, 200));
         checkTallness();
+    }
+
+    public componentDidMount() {
+        // After first commit, the aside DOM node exists — re-render so the editor portal attaches.
+        if (this.state.edit) {
+            this.forceUpdate();
+        }
     }
 
     public componentWillUnmount() {
@@ -209,9 +221,13 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         const { data } = this.state;
         delete data.decks[this.state.currentDeckName];
         this.setState({ data });
+        this.changeDeck("default");
     };
 
     public changeDeck = (newDeckName: string) => {
+        if (this.props.config.edit) {
+            localStorage.setItem("editor.currentDeck", newDeckName);
+        }
         this.setState({ currentDeckName: newDeckName, slideIndex: 0 });
     };
 
@@ -235,7 +251,11 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
                     }
                 }
                 console.log("new decks", data);
-                this.setState({ data, id, slideIndex: -1 });
+                this.setState({
+                    data,
+                    id,
+                    slideIndex: this.props.config.edit && data.decks["default"].length > 0 ? 0 : -1,
+                });
                 this.nextSlide();
             }
             datumManager.update(datums || {});
@@ -280,21 +300,24 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
         } else if (deck) {
             currentSlide = deck[this.state.slideIndex];
         }
-        const editor = this.state.edit ? (
-            <div id="editor" key="editor">
-                <EditorComponent
-                    tv={this}
-                    config={this.props.config}
-                    data={this.state.data}
-                    currentDeckName={this.state.currentDeckName}
-                    currentSlide={currentSlide}
-                />
-            </div>
-        ) : null;
         const eep = this.state.data.eep ? <div id="eep">{this.state.data.eep}</div> : null;
         const animate = !(this.state.edit || config.slow);
+        const editorPanel = this.state.edit ? document.getElementById("editor-aside") : null;
+        const editorPortal = editorPanel
+            ? createPortal(
+                  <EditorComponent
+                      data={this.state.data}
+                      tv={this}
+                      config={this.props.config}
+                      currentDeckName={this.state.currentDeckName}
+                      currentSlide={currentSlide}
+                  />,
+                  editorPanel,
+              )
+            : null;
         return (
-            <div>
+            <main>
+                {editorPortal}
                 <div id="content" key="content">
                     <OverlayComponent config={config} currentSlide={currentSlide} />
                     {currentSlide ? (
@@ -307,8 +330,7 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
                     ) : null}
                 </div>
                 {eep}
-                {editor}
-            </div>
+            </main>
         );
     }
 }

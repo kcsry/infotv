@@ -25,6 +25,7 @@ const TextSlideView: React.FC<TextSlideViewProps> = ({ slide }) => {
 class TextSlideEditor extends React.Component<TextSlideEditorProps> {
     private setContent = (event: ChangeEvent<HTMLTextAreaElement>) => {
         this.props.slide.content = event.target.value;
+        this.props.editor.markDirty();
         this.props.tv.forceUpdate();
     };
 

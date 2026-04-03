@@ -1,15 +1,113 @@
 #editor {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 420px;
-    background: #000;
-    opacity: 0.3;
-    &:hover {
-        opacity: 1;
+    display: flex;
+    height: 100vh;
+
+    aside {
+        width: 360px;
+        min-width: 360px;
+        height: 100vh;
+        overflow: hidden;
+        background-color: #333333;
+        color: #fff;
+        padding: 6px 8px;
+
+        h2 {
+            margin: 0 0 5px;
+            text-align: center;
+        }
+
+        .aside-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .aside-bottom {
+            margin-top: auto;
+            padding-top: 8px;
+        }
+
+        .deck-controls {
+            margin-bottom: 10px;
+        }
+
+        .icon-btn {
+            margin-left: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            padding: 6px;
+        }
     }
-    color: #fff;
-    padding: 10px;
+
+    #editor-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        align-items: center;
+        background: #000;
+    }
+
+    #editor-top {
+        background-color: #333333;
+        color: #fff;
+        padding: 6px 8px;
+        height: 30vh;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        .toolbar {
+            margin-top: 0;
+        }
+
+        .slide-editor {
+            flex: 1;
+            min-height: 0;
+        }
+
+        .slide-editor-col {
+            min-height: 0;
+        }
+
+        .text-slide-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+
+            textarea {
+                flex: 1;
+                height: 0; // override fixed height; flex: 1 sizes it
+                resize: none;
+            }
+        }
+
+        .preview-aspectratio-btn {
+            margin-top: auto;
+        }
+    }
+
+    main {
+        flex: 1;
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+        max-width: 100%;
+        position: relative;
+        overflow: hidden;
+        // Creates a containing block for position:fixed descendants (the TV preview #content)
+        transform: translateZ(0);
+    }
+
+    &.preview-vertical main {
+        aspect-ratio: 9 / 16;
+        max-width: unset;
+        max-height: 100%;
+    }
 
     input, textarea, button {
         background: none;
@@ -22,24 +120,98 @@
     }
 }
 
-#editor-select-slide {
-    width: 70%;
-}
+@aside-bg: #333333;
 
-.slide-selector {
-    padding-top: 10px;
+.slide-list {
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+    border-top: 1px dotted #3071a9;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    // Scroll shadow technique: local gradients act as covers that hide the
+    // scroll-attached shadows when the list is scrolled to either edge.
+    background:
+        linear-gradient(@aside-bg 30%, fade(@aside-bg, 0%)),
+        linear-gradient(fade(@aside-bg, 0%), @aside-bg 70%) 0 100%,
+        radial-gradient(farthest-side at 50% 0, rgba(255, 255, 255, 0.12), transparent),
+        radial-gradient(farthest-side at 50% 100%, rgba(255, 255, 255, 0.12), transparent) 0 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 32px, 100% 32px, 100% 10px, 100% 10px;
+    background-attachment: local, local, scroll, scroll;
+
+    .slide-item {
+        padding: 5px 8px;
+        cursor: grab;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-bottom: 1px solid rgba(48, 113, 169, 0.2);
+
+        &:hover {
+            background: rgba(48, 113, 169, 0.25);
+        }
+
+        &.selected {
+            background: rgba(48, 113, 169, 0.5);
+            font-weight: bold;
+        }
+
+        &.inactive {
+            color: #666;
+            font-style: italic;
+        }
+    }
 }
 
 .toolbar-header {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-weight: bold;
-    margin-top: 5px;
-    border-top: 1px dotted #3071a9;
+    padding: 3px 0;
 
-    & + div {
+    & + div, & + ul {
         margin-top: 0;
         border-top: none;
     }
+}
+
+.header-icon-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    opacity: 0.7;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.slide-editor {
+    display: flex;
+    gap: 8px;
+}
+
+.slide-editor-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    &:last-child {
+        flex: 0 0 220px;
+    }
+}
+
+.field-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .text-slide-editor, .multi-image-slide-editor {
@@ -47,7 +219,6 @@
 
     textarea {
         width: 100%;
-        height: 15em;
     }
 }
 
@@ -62,8 +233,6 @@
 .toolbar {
     display: flex;
     margin-top: 5px;
-    padding-top: 5px;
-    border-top: 1px dotted #3071a9;
     flex-wrap: nowrap;
     justify-content: center;
     > * {
@@ -78,10 +247,27 @@ input[type="datetime-local"] {
     width: 100%;
 }
 
-.slide-editor-ctr {
-    margin-top: 1em;
-}
-
 #eep-input {
     width: 100%;
+}
+
+.icon-btn {
+    flex-grow: 0 !important;
+    width: auto;
+    padding: 0 6px;
+}
+
+.deck-name-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.advanced-edit-toggle {
+    justify-content: flex-start;
+
+    input[type="checkbox"] {
+        flex-grow: 0;
+        width: auto;
+        border: none;
+    }
 }
