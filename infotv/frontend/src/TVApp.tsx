@@ -248,12 +248,17 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
                     }
                 }
                 console.log("new decks", data);
-                this.setState({
-                    data,
-                    id,
-                    slideIndex: this.props.config.edit && data.decks["default"].length > 0 ? 0 : -1,
-                });
-                this.nextSlide();
+                this.setState(
+                    {
+                        data,
+                        id,
+                        slideIndex:
+                            this.props.config.edit && data.decks["default"].length > 0 ? 0 : -1,
+                    },
+                    () => {
+                        this.nextSlide();
+                    },
+                );
             }
             datumManager.update(datums || {});
         });
