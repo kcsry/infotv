@@ -37,7 +37,11 @@ export default class EditorComponent extends React.Component<
         previewVertical: localStorage.getItem("editor.previewVertical") === "true",
     };
 
-    public markDirty = () => this.setState({ isDirty: true });
+    /** Flag the deck dirty and refresh preview. */
+    public markDirty = () => {
+        this.setState({ isDirty: true });
+        this.props.tv.forceUpdate();
+    };
 
     private togglePreviewOrientation = () => {
         const previewVertical = !this.state.previewVertical;
@@ -153,7 +157,6 @@ export default class EditorComponent extends React.Component<
         const eep = event.target.value;
         this.props.data.eep = eep && eep.length ? eep : null;
         this.markDirty();
-        this.props.tv.forceUpdate();
     };
 
     private slideTypeChanged = (event: any) => {
@@ -161,7 +164,6 @@ export default class EditorComponent extends React.Component<
             this.props.currentSlide.type = event.target.value;
         }
         this.markDirty();
-        this.props.tv.forceUpdate();
     };
 
     private slideBeginChanged = (event: any) => {
@@ -174,7 +176,6 @@ export default class EditorComponent extends React.Component<
                 this.props.currentSlide.scheduleBegin = undefined;
             }
             this.markDirty();
-            this.props.tv.forceUpdate();
         }
     };
 
@@ -188,7 +189,6 @@ export default class EditorComponent extends React.Component<
                 this.props.currentSlide.scheduleEnd = undefined;
             }
             this.markDirty();
-            this.props.tv.forceUpdate();
         }
     };
 
@@ -213,7 +213,6 @@ export default class EditorComponent extends React.Component<
         if (this.props.currentSlide) {
             this.props.currentSlide.duration = parseInt(event.target.value, 10);
             this.markDirty();
-            this.props.tv.forceUpdate();
         }
     };
 
@@ -240,7 +239,6 @@ export default class EditorComponent extends React.Component<
         if (!this.props.currentSlide) return;
         this.props.currentSlide.duration = this.props.currentSlide.duration <= 0 ? 1 : 0;
         this.markDirty();
-        this.props.tv.forceUpdate();
     };
 
     private advancedEditChanged = (event: React.ChangeEvent<HTMLInputElement>) => {

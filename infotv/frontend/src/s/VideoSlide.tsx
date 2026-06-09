@@ -31,13 +31,11 @@ class VideoSlideEditor extends React.Component<EditorProps<VideoSlide>> {
     private setSrc = (event: any) => {
         this.props.slide.src = event.target.value;
         this.props.editor.markDirty();
-        this.props.tv.forceUpdate();
     };
 
     private setStyle = (event: any) => {
         this.props.slide.style = event.target.value;
         this.props.editor.markDirty();
-        this.props.tv.forceUpdate();
     };
 
     public render() {

@@ -107,7 +107,6 @@ class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>
     private setConfig = (event: ChangeEvent<HTMLTextAreaElement>) => {
         this.props.slide.config = event.target.value;
         this.props.editor.markDirty();
-        this.props.tv.forceUpdate();
     };
 
     public render() {
