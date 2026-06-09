@@ -412,22 +412,22 @@ export default class EditorComponent extends React.Component<
                                 </select>
                             )}
                             {currentDeckName !== "default" && !deckEditMode && (
-                                <button
-                                    className="icon-btn"
-                                    title="Nimeä uudelleen"
-                                    onClick={this.startRenameDeck}
-                                >
-                                    <i className="fas fa-pen" />
-                                </button>
-                            )}
-                            {currentDeckName !== "default" && !deckEditMode && (
-                                <button
-                                    className="icon-btn"
-                                    title="Poista pakka"
-                                    onClick={this.deleteDeck}
-                                >
-                                    <i className="fas fa-trash" />
-                                </button>
+                                <>
+                                    <button
+                                        className="icon-btn"
+                                        title="Nimeä uudelleen"
+                                        onClick={this.startRenameDeck}
+                                    >
+                                        <i className="fas fa-pen" />
+                                    </button>
+                                    <button
+                                        className="icon-btn"
+                                        title="Poista pakka"
+                                        onClick={this.deleteDeck}
+                                    >
+                                        <i className="fas fa-trash" />
+                                    </button>
+                                </>
                             )}
                         </div>
                     </>
