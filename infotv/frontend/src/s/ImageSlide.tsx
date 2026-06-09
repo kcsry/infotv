@@ -20,6 +20,7 @@ const ImageSlideView: React.FC<ViewProps<ImageSlide>> = (props) => {
 class ImageSlideEditor extends React.Component<EditorProps<ImageSlide>> {
     private setSrc = (event: any) => {
         this.props.slide.src = event.target.value;
+        this.props.editor.markDirty();
         this.props.tv.forceUpdate();
     };
 

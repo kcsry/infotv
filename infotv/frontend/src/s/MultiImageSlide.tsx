@@ -56,7 +56,7 @@ class MultiImageSlideView extends React.Component<
         };
     }
 
-    public UNSAFE_componentWillMount() {
+    public componentDidMount() {
         this.setState({
             updateTimer: window.setInterval(this.tick, 100),
         });
@@ -106,6 +106,7 @@ class MultiImageSlideView extends React.Component<
 class MultiImageSlideEditor extends React.Component<EditorProps<MultiImageSlide>> {
     private setConfig = (event: ChangeEvent<HTMLTextAreaElement>) => {
         this.props.slide.config = event.target.value;
+        this.props.editor.markDirty();
         this.props.tv.forceUpdate();
     };
 
