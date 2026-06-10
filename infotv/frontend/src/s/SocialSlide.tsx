@@ -42,7 +42,7 @@ function SocialSlideView() {
     const [frame, setFrame] = React.useState(0);
     const tick = React.useCallback(() => setFrame((frame) => frame + 1), []);
     useInterval(tick, 600);
-    const items = datumManager.getValue("social") || [];
+    const items = datumManager.getValue<SocialElement[]>("social") || [];
     const limit = Math.min(frame, items.length);
     const childElements = items.slice(0, limit).map(renderSocialElement);
     return (
