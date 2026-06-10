@@ -134,5 +134,5 @@ class InfoTvView(View):
             )
         return JsonResponse({
             "id": deck.pk,
-            "message": "ok :) id = %d" % deck.pk
+            "message": f"ok :) id = {int(deck.pk)}"
         })
