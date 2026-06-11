@@ -22,7 +22,7 @@ class Command(BaseCommand):
             except requests.HTTPError as he:
                 if he.response.status_code == 401:  # Reraise unauthorized immediately
                     raise
-                self.stderr.write("Attempt %d failed (%s), trying again soon..." % (attempt, he))
+                self.stderr.write(f"Attempt {int(attempt)} failed ({he}), trying again soon...")
                 time.sleep(2 ** (attempt - 1))
         raise RuntimeError("All attempts at retrieving data failed.")
 

@@ -47,8 +47,8 @@ export default class TVApp extends React.Component<TVAppProps, TVAppState> {
             currentDeckName: config.deck
                 ? config.deck.toLowerCase()
                 : config.edit
-                ? localStorage.getItem("editor.currentDeck") ?? "default"
-                : "default",
+                  ? (localStorage.getItem("editor.currentDeck") ?? "default")
+                  : "default",
             id: -1,
             slideIndex: 0,
             ticksUntilNextSlide: 1,
